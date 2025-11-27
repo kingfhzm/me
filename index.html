@@ -13,28 +13,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;700&display=swap" rel="stylesheet">
 
     <style>
-        /* --- 核心美学 --- */
         :root {
-            --bg-color: #0a0a0a;
+            --bg-color: #080808;
             --text-color: #888;
             --highlight: #e0e0e0;
-            --accent: #6e1b1b; /* 血红 */
+            --accent: #6e1b1b;
             --dead-grey: #333;
             --font-main: "Noto Serif SC", "Songti SC", "SimSun", serif;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        /* 优化点 1：自定义选中颜色 (血色) */
-        ::selection {
-            background: var(--accent);
-            color: #fff;
-            text-shadow: 0 0 5px rgba(0,0,0,0.5);
-        }
-        ::-moz-selection {
-            background: var(--accent);
-            color: #fff;
-        }
+        /* 选中文字变成血色 */
+        ::selection { background: var(--accent); color: #fff; }
 
         body {
             background-color: var(--bg-color);
@@ -47,22 +38,37 @@
             -webkit-font-smoothing: antialiased;
             transition: background-color 3s ease;
             font-weight: 300;
+            /* 优化点1：濒死闪烁 (页面整体微弱忽明忽暗) */
+            animation: dying-light 10s infinite linear; 
         }
 
         body.dark-mode { background-color: #000; }
 
-        /* 优化点 3：生命线进度条 */
+        /* 优化点3：生命线 (解封后出现) */
         #life-line {
             position: fixed;
             top: 0;
             left: 0;
-            height: 2px;
+            height: 1px;
             background: var(--accent);
             width: 0%;
             z-index: 1000;
             box-shadow: 0 0 10px var(--accent);
             transition: width 0.1s;
-            opacity: 0; /* 初始隐藏，解封后显示 */
+            opacity: 0; 
+        }
+
+        /* 优化点2：隧道暗角 (Vignette) - 增加压抑感 */
+        .vignette-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 90;
+            background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.8) 100%);
+            opacity: 0.8;
         }
 
         /* 胶片噪点 */
@@ -73,8 +79,8 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 100;
-            opacity: 0.04;
+            z-index: 95;
+            opacity: 0.05;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
@@ -170,7 +176,7 @@
         }
         #author-seal:hover::after { opacity: 1; }
 
-        /* 优化点 2：点击时的震颤动画 */
+        /* 震颤动画 */
         #author-seal.shaking {
             animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
         }
@@ -303,6 +309,21 @@
             30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
             40%, 60% { transform: translate3d(4px, 0, 0); }
         }
+        /* 濒死闪烁：极不规律的明暗变化 */
+        @keyframes dying-light {
+            0% { opacity: 1; }
+            3% { opacity: 0.95; }
+            5% { opacity: 1; }
+            25% { opacity: 1; }
+            27% { opacity: 0.9; }
+            30% { opacity: 1; }
+            60% { opacity: 1; }
+            61% { opacity: 0.92; }
+            62% { opacity: 1; }
+            95% { opacity: 1; }
+            97% { opacity: 0.85; }
+            100% { opacity: 1; }
+        }
 
         @media (max-width: 600px) {
             h1 { font-size: 2.8rem; }
@@ -319,6 +340,7 @@
         <source src="bgm.mp3" type="audio/mp3">
     </audio>
 
+    <div class="vignette-overlay"></div>
     <div class="grain-overlay"></div>
 
     <div id="start-screen">
@@ -452,7 +474,6 @@
         const body = document.body;
         const lifeLine = document.getElementById('life-line');
 
-        // 1. 开场
         startScreen.addEventListener('click', () => {
             bgm.volume = 0.6;
             bgm.play().catch(e => console.log(e));
@@ -464,14 +485,12 @@
             }, 1800);
         });
 
-        // 2. 核心交互（加了震颤）
         authorSeal.addEventListener('click', () => {
             if (authorSeal.classList.contains('dead')) return;
 
-            // 先震颤
+            // 交互震颤 + 变身
             authorSeal.classList.add('shaking');
-
-            // 震颤动画结束后（0.5s），变身绝笔
+            
             setTimeout(() => {
                 authorSeal.classList.remove('shaking');
                 authorSeal.classList.add('dead');
@@ -490,7 +509,15 @@
             }, 500);
         });
 
-        // 3. 滚动渐显
+        // 优化点3：标签页呼唤 (卑微的生命力)
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                document.title = "别走……";
+            } else {
+                document.title = "人生如此 | 谦总";
+            }
+        });
+
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -504,7 +531,6 @@
             observer.observe(block);
         });
 
-        // 4. 生命线进度条逻辑
         window.addEventListener('scroll', () => {
             if(lifeLine.style.opacity === '1') {
                 const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
