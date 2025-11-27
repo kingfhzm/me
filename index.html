@@ -1,0 +1,398 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人生如此 | 谦总</title>
+    <style>
+        /* --- 核心美学：清冷、高级灰 --- */
+        :root {
+            --bg-color: #0a0a0a;
+            --text-color: #888;
+            --highlight: #e0e0e0;
+            --accent: #6e1b1b; /* 印章红 */
+            --dead-grey: #333;
+            --font-main: "Songti SC", "Noto Serif SC", "SimSun", serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            line-height: 2.6;
+            font-size: 16px;
+            min-height: 100vh;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+            transition: background-color 3s ease;
+        }
+
+        body.dark-mode { background-color: #000; }
+
+        /* 胶片质感 */
+        .grain-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+            opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* 开场遮罩 */
+        #start-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 2s ease;
+            cursor: pointer;
+        }
+
+        .breathing-point {
+            width: 4px;
+            height: 4px;
+            background-color: var(--highlight);
+            border-radius: 50%;
+            box-shadow: 0 0 30px var(--highlight);
+            animation: breathe 4s infinite ease-in-out;
+            margin-bottom: 60px;
+        }
+
+        .enter-text {
+            font-size: 0.8rem;
+            letter-spacing: 10px;
+            color: #555;
+            opacity: 0.7;
+        }
+
+        /* 封面 */
+        header {
+            height: 100vh;
+            width: 100%;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 2s ease;
+        }
+
+        .vertical-title-box {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            display: flex;
+            align-items: center;
+            gap: 40px;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            color: var(--highlight);
+            font-weight: normal;
+            letter-spacing: 15px;
+            text-shadow: 0 0 20px rgba(0,0,0,1);
+        }
+
+        /* 交互印章 */
+        #author-seal {
+            font-size: 1rem;
+            color: var(--accent);
+            letter-spacing: 8px;
+            font-weight: bold;
+            border: 2px solid var(--accent);
+            padding: 15px 8px;
+            cursor: pointer;
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            animation: seal-pulse 3s infinite;
+            position: relative;
+        }
+        
+        #author-seal::after {
+            content: "点击解封";
+            position: absolute;
+            left: -50px;
+            top: 50%;
+            transform: translateY(-50%) rotate(90deg);
+            font-size: 0.6rem;
+            color: #444;
+            width: 100px;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 1s;
+            pointer-events: none;
+        }
+        #author-seal:hover::after { opacity: 1; }
+
+        #author-seal.dead {
+            border-color: var(--dead-grey);
+            color: var(--dead-grey);
+            animation: none;
+            transform: scale(0.95);
+            box-shadow: none;
+            pointer-events: none;
+        }
+
+        .meta-info {
+            font-size: 0.8rem;
+            color: #555;
+            letter-spacing: 4px;
+            border-left: 1px solid #1a1a1a;
+            padding-left: 20px;
+        }
+
+        /* 正文区 */
+        .container {
+            max-width: 580px;
+            margin: 0 auto;
+            padding: 100px 30px 200px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 3s ease-in;
+        }
+
+        .container.revealed { opacity: 1; pointer-events: auto; }
+
+        .content-block {
+            margin-bottom: 200px;
+            opacity: 0;
+            transform: translateY(30px);
+            filter: blur(8px);
+            transition: all 2.5s ease;
+        }
+
+        .content-block.visible {
+            opacity: 1;
+            transform: translateY(0);
+            filter: blur(0);
+        }
+
+        .prompt-text {
+            display: block;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #4a4a4a;
+            margin-bottom: 50px;
+            letter-spacing: 4px;
+            font-style: italic;
+        }
+
+        .response-text {
+            color: var(--text-color);
+            margin-bottom: 28px;
+            text-align: justify;
+            text-shadow: 0 0 1px rgba(0,0,0,0.8);
+        }
+
+        .highlight-text {
+            color: #b0b0b0;
+            border-left: 1px solid var(--accent);
+            padding-left: 20px;
+            margin-top: 40px;
+            font-style: italic;
+        }
+
+        .final-chapter {
+            text-align: center;
+            margin-top: 300px;
+            padding-bottom: 100px;
+        }
+
+        .final-q {
+            font-size: 1.5rem;
+            letter-spacing: 12px;
+            color: var(--highlight);
+            opacity: 0.5;
+            margin-top: 150px;
+            animation: shiver 5s infinite;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #222;
+            letter-spacing: 2px;
+            margin-top: 100px;
+        }
+
+        @keyframes breathe {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.3); }
+        }
+        @keyframes seal-pulse {
+            0%, 100% { box-shadow: 0 0 0 transparent; }
+            50% { box-shadow: 0 0 15px rgba(110, 27, 27, 0.2); }
+        }
+        @keyframes shiver {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 0.8; text-shadow: 0 0 10px rgba(255,255,255,0.1); }
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 2.8rem; }
+            .container { padding: 50px 25px 150px; }
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="bgm" loop preload="auto">
+        <source src="bgm.mp3" type="audio/mp3">
+    </audio>
+
+    <div class="grain-overlay"></div>
+
+    <div id="start-screen">
+        <div class="breathing-point"></div>
+        <div class="enter-text">触碰 · 聆听</div>
+    </div>
+
+    <header id="main-header">
+        <div class="vertical-title-box">
+            <div id="author-seal">谦总</div>
+
+            <div class="meta-info">NO.16 最后一刀</div>
+            <h1>人生如此</h1>
+        </div>
+    </header>
+
+    <div class="container" id="content">
+        
+        <div class="content-block">
+            <span class="prompt-text">“现实会逼着你把监狱装修得更辉煌”</span>
+            <p class="response-text">我听见了。</p>
+            <p class="response-text">我把笑容刷了一层又一层，像一层体面的墙纸。</p>
+            <p class="response-text">我把自己关在里面，怕有人透过缝隙，看见缩在墙角的那个小孩。</p>
+            <p class="response-text highlight-text">我怕他们看见我哭，更怕他们看见了，却假装没看见。</p>
+        </div>
+
+        <div class="content-block">
+            <span class="prompt-text">“我把心调到 1%”</span>
+            <p class="response-text">不是为了省电，是因为我不敢满电。</p>
+            <p class="response-text">屏幕常亮着，像是一个在等信号的求救者。</p>
+            <p class="response-text">我不敢关机。关机了，就连这最后一点微弱的光也没了。</p>
+            <p class="response-text highlight-text">那就真的只剩黑暗了。</p>
+        </div>
+
+        <div class="content-block">
+            <span class="prompt-text">“来了是不是又是对我的一场天灾”</span>
+            <p class="response-text">我不怕天灾，我怕我是那场雨。</p>
+            <p class="response-text">我拼命把你往外推，推到自己心都在抖。</p>
+            <p class="response-text">我提前把自己锁起来，不是拒绝温暖，是怕我身上的寒气，冻伤了你。</p>
+        </div>
+
+        <div class="content-block">
+            <span class="prompt-text">“爱不会让你有呼吸可言”</span>
+            <p class="response-text">他们说这是为我好。我笑着说“谢谢”。</p>
+            <p class="response-text">我习惯了在稀薄的空气里呼吸，把这种压抑当成了安全感。</p>
+            <p class="response-text">好像只有被紧紧束缚着，我才觉得自己没有被抛弃。</p>
+        </div>
+
+        <div class="content-block">
+            <span class="prompt-text">“我渴望被爱 拥抱 贪婪”</span>
+            <p class="response-text">这种渴望让我觉得自己像个还没长大的孩子。</p>
+            <p class="response-text">我想伸手要一颗糖，又怕被人笑话不懂事。</p>
+            <p class="response-text highlight-text">我饿得发慌，却还要装作从容的样子，把手背在身后。</p>
+        </div>
+        
+        <div class="content-block">
+            <span class="prompt-text">“反反复复揭开早已愈合的伤口”</span>
+            <p class="response-text">不是为了疼，是为了记得。</p>
+            <p class="response-text">我怕伤口好了，我就忘了当初是怎么活过来的。</p>
+            <p class="response-text highlight-text">痛觉是我确认自己还存在的唯一方式。</p>
+        </div>
+
+        <div class="content-block">
+            <span class="prompt-text">“这是枷锁”</span>
+            <p class="response-text">我给自己打了个死结。</p>
+            <p class="response-text">有时候我甚至感谢这个结，因为它拽着我，没让我彻底飘进虚无里。</p>
+        </div>
+
+        <div class="content-block final-chapter">
+            <span class="prompt-text" style="color: var(--accent);">你值得吗</span>
+            <br>
+            <p class="response-text">我听见了。这三个字那么轻，却压得我喘不过气。</p>
+            <p class="response-text">我问了一千次，删了一千次。</p>
+            <br>
+            <p class="response-text">我站在这里，像个做错了事的孩子，浑身泥泞。</p>
+            <p class="response-text">我不敢看你的眼睛，却又不想走。</p>
+            <p class="response-text">我用尽了所有的勇气，声音沙哑地问你：</p>
+            <p class="response-text" style="text-align: center; margin: 60px 0; letter-spacing: 5px; color: #fff;">我……配……吗……</p>
+            <br>
+            <p class="response-text">我怕你笑。怕你转身就走。</p>
+            <p class="response-text">怕你礼貌地说：“你不配。”</p>
+            <br>
+            <p class="response-text">你没说。你只是看着。</p>
+            <p class="response-text">我碎了。</p>
+            <p class="response-text">你值得吗。我问了。我碎了。</p>
+
+            <div class="final-q">我也有吗。</div>
+        </div>
+
+        <footer>
+            &copy; 谦总绝笔
+        </footer>
+
+    </div>
+
+    <script>
+        const startScreen = document.getElementById('start-screen');
+        const header = document.getElementById('main-header');
+        const content = document.getElementById('content');
+        const bgm = document.getElementById('bgm');
+        const authorSeal = document.getElementById('author-seal');
+        const body = document.body;
+
+        startScreen.addEventListener('click', () => {
+            bgm.volume = 0.6;
+            bgm.play().catch(e => console.log(e));
+            
+            startScreen.style.opacity = '0';
+            setTimeout(() => {
+                startScreen.style.display = 'none';
+                header.style.opacity = '1';
+            }, 1800);
+        });
+
+        authorSeal.addEventListener('click', () => {
+            if (authorSeal.classList.contains('dead')) return;
+
+            authorSeal.classList.add('dead');
+            authorSeal.innerText = "绝笔"; 
+            body.classList.add('dark-mode');
+
+            content.classList.add('revealed');
+            
+            setTimeout(() => {
+                document.body.style.overflow = 'auto';
+                window.scrollBy({ top: 100, behavior: 'smooth' });
+            }, 500);
+        });
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target); 
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.content-block').forEach((block) => {
+            observer.observe(block);
+        });
+    </script>
+</body>
+</html>
