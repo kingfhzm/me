@@ -2,140 +2,68 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>人生如此 | 谦总</title>
     
     <meta name="robots" content="noindex, nofollow">
     <meta name="googlebot" content="noindex">
 
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%230a0a0a%22/><circle cx=%2250%22 cy=%2250%22 r=%2230%22 fill=%22%236e1b1b%22/></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%23000000%22/><circle cx=%2250%22 cy=%2250%22 r=%2230%22 fill=%22%237d1a1a%22/></svg>">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@200;300;400;500&display=swap" rel="stylesheet">
 
     <style>
+        /* --- 导演剪辑版 · 视觉规范 --- */
         :root {
-            --bg-color: #080808;
-            --text-color: #888;
-            --highlight: #e0e0e0;
-            --accent: #6e1b1b;
-            --dead-grey: #333;
-            --font-main: "Noto Serif SC", "Songti SC", "SimSun", serif;
+            --bg-color: #000000;       /* 纯黑基底 */
+            --text-primary: #f2f2f2;   /* 电影白 */
+            --text-secondary: #888888; /* 字幕灰 */
+            --accent: #8a1c1c;         /* 凝固血色 */
+            --font-main: "Noto Serif SC", "Songti SC", serif;
+            
+            /* 电影级缓动曲线 (极慢、优雅) */
+            --ease-cinematic: cubic-bezier(0.22, 1, 0.36, 1);
         }
 
-        * { 
-            margin: 0; 
-            padding: 0; 
-            box-sizing: border-box; 
-            /* 隐藏默认光标，使用自定义光标 */
-            cursor: none !important; 
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        /* 细节：自定义选中色 */
-        ::selection { background: var(--accent); color: #fff; text-shadow: none; }
+        /* 选中态：血色背景 */
+        ::selection { background: var(--accent); color: #fff; }
 
         html {
-            /* 细节：平滑滚动，增加沉重感 */
-            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         body {
             background-color: var(--bg-color);
-            color: var(--text-color);
+            color: var(--text-secondary);
             font-family: var(--font-main);
             line-height: 2.6;
             font-size: 16px;
+            font-weight: 300;
             min-height: 100vh;
             overflow: hidden; /* 初始锁屏 */
-            -webkit-font-smoothing: antialiased;
             transition: background-color 3s ease;
-            font-weight: 300;
-            animation: dying-light 15s infinite linear;
         }
 
-        body.dark-mode { background-color: #000; }
-
-        /* --- 自定义光标 (游魂) --- */
-        #cursor {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 20px;
-            height: 20px;
-            border: 1px solid var(--accent);
-            border-radius: 50%;
-            pointer-events: none; /* 让鼠标穿透，不影响点击 */
-            z-index: 99999;
-            transform: translate(-50%, -50%);
-            transition: transform 0.1s ease-out, width 0.3s, height 0.3s, background-color 0.3s;
-            mix-blend-mode: difference; /* 高级混合模式 */
-        }
-        /* 点击时的光标状态 */
-        body:active #cursor {
-            width: 10px;
-            height: 10px;
-            background-color: var(--highlight);
-            border-color: var(--highlight);
-        }
-
-        /* --- 细节：色散效果 (Glitch) --- */
-        .glitch-text {
-            position: relative;
-            display: inline-block;
-        }
-        .glitch-text::before, .glitch-text::after {
-            content: attr(data-text);
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0.8;
-        }
-        /* 红移 */
-        .glitch-text::before {
-            color: #ff0000;
-            z-index: -1;
-            transform: translate(-1px, 0);
-            mix-blend-mode: multiply;
-            animation: glitch-anim-1 3s infinite linear alternate-reverse;
-        }
-        /* 蓝移 */
-        .glitch-text::after {
-            color: #0000ff;
-            z-index: -2;
-            transform: translate(1px, 0);
-            mix-blend-mode: multiply;
-            animation: glitch-anim-2 4s infinite linear alternate-reverse;
-        }
-
-        /* 顶部生命线 */
+        /* --- 顶部生命线 (进度条) --- */
         #life-line {
             position: fixed;
             top: 0;
             left: 0;
-            height: 1px;
+            height: 2px;
             background: var(--accent);
             width: 0%;
-            z-index: 1000;
-            box-shadow: 0 0 15px var(--accent); /* 光晕增强 */
-            transition: width 0.1s;
-            opacity: 0; 
+            z-index: 2000;
+            box-shadow: 0 0 10px var(--accent);
+            transition: width 0.1s linear;
+            opacity: 0;
         }
 
-        .vignette-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 90;
-            background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.9) 100%); /* 暗角加重 */
-            opacity: 0.8;
-        }
-
+        /* --- 胶片噪点 (增强质感) --- */
         .grain-overlay {
             position: fixed;
             top: 0;
@@ -143,11 +71,12 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 95;
-            opacity: 0.05;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            z-index: 50;
+            opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
+        /* --- 开场遮罩 --- */
         #start-screen {
             position: fixed;
             top: 0;
@@ -155,41 +84,44 @@
             width: 100%;
             height: 100%;
             background-color: #000;
-            z-index: 10000;
+            z-index: 9999;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            transition: opacity 2s ease;
-            cursor: none; /* 这里也隐藏光标 */
+            transition: opacity 2s var(--ease-cinematic);
+            cursor: pointer;
         }
 
         .breathing-point {
-            width: 4px;
-            height: 4px;
-            background-color: var(--highlight);
+            width: 6px;
+            height: 6px;
+            background-color: var(--text-primary);
             border-radius: 50%;
-            box-shadow: 0 0 40px var(--highlight);
-            animation: breathe 4s infinite ease-in-out;
-            margin-bottom: 60px;
+            opacity: 0.6;
+            animation: breathe 5s infinite ease-in-out;
+            margin-bottom: 40px;
+            box-shadow: 0 0 20px rgba(255,255,255,0.3);
         }
 
         .enter-text {
-            font-size: 0.8rem;
-            letter-spacing: 12px;
-            color: #555;
-            opacity: 0.7;
+            font-size: 11px;
+            letter-spacing: 0.5em;
+            text-transform: uppercase;
+            color: #444;
+            transition: color 0.8s ease;
         }
+        #start-screen:hover .enter-text { color: #888; }
 
+        /* --- 封面区 (竖排艺术) --- */
         header {
             height: 100vh;
             width: 100%;
-            position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
             opacity: 0;
-            transition: opacity 2s ease;
+            transition: opacity 2.5s var(--ease-cinematic);
         }
 
         .vertical-title-box {
@@ -197,120 +129,124 @@
             text-orientation: mixed;
             display: flex;
             align-items: center;
-            gap: 40px;
+            gap: 32px;
         }
 
         h1 {
-            font-size: 3.5rem;
-            color: var(--highlight);
-            font-weight: 400;
-            letter-spacing: 15px;
-            text-shadow: 0 0 20px rgba(0,0,0,1);
+            font-size: 3.2rem;
+            color: var(--text-primary);
+            font-weight: 300;
+            letter-spacing: 0.25em;
+            margin: 0;
+            text-shadow: 0 0 30px rgba(0,0,0,0.8);
         }
 
         /* 交互印章 */
         #author-seal {
-            font-size: 1rem;
+            font-size: 14px;
             color: var(--accent);
-            letter-spacing: 8px;
-            font-weight: bold;
-            border: 2px solid var(--accent);
-            padding: 15px 8px;
-            /* 必须显式设置cursor:none，防止悬停时系统光标出现 */
-            cursor: none; 
-            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            animation: seal-pulse 3s infinite;
+            letter-spacing: 0.4em;
+            font-weight: 500;
+            border: 1px solid var(--accent);
+            padding: 18px 7px;
+            cursor: pointer;
+            transition: all 0.8s var(--ease-cinematic);
+            opacity: 0.8;
             position: relative;
         }
         
         #author-seal::after {
             content: "点击解封";
             position: absolute;
-            left: -50px;
+            left: -40px;
             top: 50%;
             transform: translateY(-50%) rotate(90deg);
-            font-size: 0.6rem;
+            font-size: 10px;
             color: #444;
-            width: 100px;
-            text-align: center;
             opacity: 0;
-            transition: opacity 1s;
+            transition: opacity 0.5s ease;
             pointer-events: none;
+            letter-spacing: 2px;
+            white-space: nowrap;
         }
+        #author-seal:hover { opacity: 1; box-shadow: 0 0 25px rgba(138, 28, 28, 0.15); }
         #author-seal:hover::after { opacity: 1; }
 
-        #author-seal.shaking { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        /* 状态：已死 */
         #author-seal.dead {
-            border-color: var(--dead-grey);
-            color: var(--dead-grey);
-            animation: none;
+            border-color: #333;
+            color: #333;
             transform: scale(0.95);
             box-shadow: none;
             pointer-events: none;
+            filter: grayscale(100%);
         }
 
         .meta-info {
-            font-size: 0.8rem;
-            color: #555;
-            letter-spacing: 4px;
+            font-size: 11px;
+            color: #444;
+            letter-spacing: 0.3em;
             border-left: 1px solid #1a1a1a;
-            padding-left: 20px;
+            padding-left: 24px;
         }
 
+        /* --- 正文容器 --- */
         .container {
-            max-width: 580px;
+            max-width: 620px;
             margin: 0 auto;
-            padding: 100px 30px 200px;
+            padding: 150px 24px 200px;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 3s ease-in;
+            transition: opacity 2.5s ease-in;
         }
         .container.revealed { opacity: 1; pointer-events: auto; }
 
         .content-block {
-            margin-bottom: 150px;
+            margin-bottom: 180px;
             opacity: 0;
             transform: translateY(30px);
-            filter: blur(8px);
-            transition: all 2.5s ease;
+            filter: blur(12px); /* 初始模糊更重，模拟泪眼 */
+            transition: all 2s var(--ease-cinematic);
         }
         .content-block.visible { opacity: 1; transform: translateY(0); filter: blur(0); }
 
+        /* 日记碎片 (模块1：V11保留) */
         .diary-entry {
             text-align: right;
-            margin: 0 0 150px auto; 
-            max-width: 280px;
+            margin: 0 0 180px auto; 
+            max-width: 260px;
             opacity: 0; 
             border-right: 1px solid #222;
-            padding-right: 20px;
-            font-size: 0.8rem;
-            font-family: monospace;
-            transform: translateY(30px);
-            transition: all 2.5s ease;
+            padding-right: 16px;
+            font-size: 12px;
+            color: #555;
+            font-family: monospace; /* 机械感 */
+            transform: translateY(20px);
+            transition: all 2s var(--ease-cinematic);
         }
-        .diary-entry.visible { opacity: 0.7; transform: translateY(0); }
-        .diary-date { color: var(--accent); margin-bottom: 8px; opacity: 0.9; letter-spacing: 1px; }
-        .diary-text { color: #555; font-style: italic; line-height: 1.8; }
+        .diary-entry.visible { opacity: 1; transform: translateY(0); }
+        .diary-date { color: var(--accent); margin-bottom: 8px; opacity: 0.8; letter-spacing: 1px; }
 
+        /* 文本排版 */
         .prompt-text {
             display: block;
             text-align: center;
-            font-size: 0.9rem;
-            color: #4a4a4a;
+            font-size: 13px;
+            color: #444;
             margin-bottom: 50px;
-            letter-spacing: 4px;
-            font-style: italic;
+            letter-spacing: 0.15em;
         }
 
         .response-text {
-            color: var(--text-color);
+            color: var(--text-secondary);
             margin-bottom: 28px;
             text-align: justify;
-            text-shadow: 0 0 1px rgba(0,0,0,0.8);
+            font-size: 16px;
+            font-weight: 300;
         }
 
         .highlight-text {
-            color: #b0b0b0;
+            color: var(--text-primary);
             border-left: 1px solid var(--accent);
             padding-left: 20px;
             margin-top: 40px;
@@ -319,85 +255,47 @@
 
         .final-chapter {
             text-align: center;
-            margin-top: 300px;
-            padding-bottom: 100px;
+            margin-top: 280px;
         }
 
         .final-q {
-            font-size: 1.5rem;
-            letter-spacing: 12px;
-            color: var(--highlight);
-            opacity: 0.5;
-            margin-top: 150px;
-            animation: shiver 5s infinite;
+            font-size: 1.2rem;
+            letter-spacing: 0.5em;
+            color: var(--text-primary);
+            opacity: 0.6;
+            margin-top: 140px;
+            font-weight: 200;
         }
 
         footer {
             text-align: center;
-            font-size: 0.7rem;
+            font-size: 10px;
             color: #222;
-            letter-spacing: 2px;
-            margin-top: 100px;
+            letter-spacing: 0.3em;
+            margin-top: 150px;
+            text-transform: uppercase;
         }
 
-        /* 动画库 */
+        /* --- 动画库 --- */
         @keyframes breathe {
             0%, 100% { opacity: 0.3; transform: scale(1); }
-            50% { opacity: 0.8; transform: scale(1.3); }
-        }
-        @keyframes seal-pulse {
-            0%, 100% { box-shadow: 0 0 0 transparent; }
-            50% { box-shadow: 0 0 15px rgba(110, 27, 27, 0.2); }
-        }
-        @keyframes shiver {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 0.8; text-shadow: 0 0 10px rgba(255,255,255,0.1); }
+            50% { opacity: 0.8; transform: scale(1.2); }
         }
         @keyframes shake {
             10%, 90% { transform: translate3d(-1px, 0, 0); }
-            20%, 80% { transform: translate3d(2px, 0, 0); }
-            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-            40%, 60% { transform: translate3d(4px, 0, 0); }
-        }
-        @keyframes dying-light {
-            0%, 100% { opacity: 1; }
-            25% { opacity: 0.96; }
-            50% { opacity: 1; }
-            75% { opacity: 0.94; }
-            95% { opacity: 0.9; }
-        }
-        /* 极微小的色散抖动 */
-        @keyframes glitch-anim-1 {
-            0% { transform: translate(0); }
-            20% { transform: translate(-1px, 1px); }
-            40% { transform: translate(-1px, -1px); }
-            60% { transform: translate(1px, 1px); }
-            80% { transform: translate(1px, -1px); }
-            100% { transform: translate(0); }
-        }
-        @keyframes glitch-anim-2 {
-            0% { transform: translate(0); }
-            20% { transform: translate(1px, -1px); }
-            40% { transform: translate(1px, 1px); }
-            60% { transform: translate(-1px, -1px); }
-            80% { transform: translate(-1px, 1px); }
-            100% { transform: translate(0); }
+            20%, 80% { transform: translate3d(1px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-2px, 0, 0); }
+            40%, 60% { transform: translate3d(2px, 0, 0); }
         }
 
         @media (max-width: 600px) {
-            h1 { font-size: 2.8rem; }
-            .container { padding: 50px 25px 150px; }
-            .diary-entry { margin-right: 10px; font-size: 0.75rem; }
-            /* 手机上隐藏自定义光标，因为没有鼠标 */
-            #cursor { display: none; }
-            /* 手机上恢复默认点击效果 */
-            * { cursor: auto !important; }
+            h1 { font-size: 2.6rem; }
+            .container { padding: 80px 24px 150px; }
+            .diary-entry { margin-right: 0; text-align: left; border-right: none; border-left: 1px solid #222; padding-left: 16px; }
         }
     </style>
 </head>
 <body>
-
-    <div id="cursor"></div>
 
     <div id="life-line"></div>
 
@@ -405,19 +303,18 @@
         <source src="bgm.mp3" type="audio/mp3">
     </audio>
 
-    <div class="vignette-overlay"></div>
     <div class="grain-overlay"></div>
 
     <div id="start-screen">
         <div class="breathing-point"></div>
-        <div class="enter-text">触碰 · 聆听</div>
+        <div class="enter-text">Enter</div>
     </div>
 
     <header id="main-header">
         <div class="vertical-title-box">
             <div id="author-seal">谦总</div>
-            <h1 class="glitch-text" data-text="人生如此">人生如此</h1>
-            <div class="meta-info">NO.16 最后一刀</div>
+            <div class="meta-info">NO.16 DIRECTOR'S CUT</div>
+            <h1>人生如此</h1>
         </div>
     </header>
 
@@ -446,7 +343,7 @@
 
         <div class="diary-entry">
             <div class="diary-date">2019.03.15</div>
-            <div class="diary-text">停药的第三天。世界安静得像一部默片。我终于不用假装听得懂他们在笑什么了。</div>
+            <div class="diary-text">停药的第三天。世界安静得像一部默片。</div>
         </div>
 
         <div class="content-block">
@@ -512,7 +409,7 @@
             <p class="response-text">我站在这里，像个做错了事的孩子，浑身泥泞。</p>
             <p class="response-text">我不敢看你的眼睛，却又不想走。</p>
             <p class="response-text">我用尽了所有的勇气，声音沙哑地问你：</p>
-            <p class="response-text" style="text-align: center; margin: 60px 0; letter-spacing: 5px; color: #fff;">我……配……吗……</p>
+            <p class="response-text" style="text-align: center; margin: 60px 0; letter-spacing: 0.2em; color: var(--text-primary);">我……配……吗……</p>
             <br>
             <p class="response-text">我怕你笑。怕你转身就走。</p>
             <p class="response-text">怕你礼貌地说：“你不配。”</p>
@@ -538,14 +435,8 @@
         const authorSeal = document.getElementById('author-seal');
         const body = document.body;
         const lifeLine = document.getElementById('life-line');
-        const cursor = document.getElementById('cursor');
 
-        // 自定义光标逻辑
-        document.addEventListener('mousemove', (e) => {
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
-        });
-
+        // 1. 开场逻辑 (点击进入)
         startScreen.addEventListener('click', () => {
             bgm.volume = 0.6;
             bgm.play().catch(e => console.log(e));
@@ -554,20 +445,28 @@
             setTimeout(() => {
                 startScreen.style.display = 'none';
                 header.style.opacity = '1';
-            }, 1800);
+            }, 1500); // 配合 CSS 的 1.5s 过渡
         });
 
+        // 2. 印章逻辑 (点击解封)
         authorSeal.addEventListener('click', () => {
             if (authorSeal.classList.contains('dead')) return;
 
+            // 震颤
             authorSeal.classList.add('shaking');
             
             setTimeout(() => {
                 authorSeal.classList.remove('shaking');
                 authorSeal.classList.add('dead');
                 authorSeal.innerText = "绝笔"; 
-                body.classList.add('dark-mode');
+                
+                // 变暗背景
+                body.style.backgroundColor = '#030303'; 
+                
+                // 显示生命线
                 lifeLine.style.opacity = '1';
+
+                // 显示内容
                 content.classList.add('revealed');
                 
                 setTimeout(() => {
@@ -577,6 +476,7 @@
             }, 500);
         });
 
+        // 3. 标签页呼唤
         document.addEventListener('visibilitychange', function() {
             if (document.hidden) {
                 document.title = "别走……";
@@ -585,6 +485,7 @@
             }
         });
 
+        // 4. 滚动观察器
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -598,6 +499,7 @@
             observer.observe(block);
         });
 
+        // 5. 顶部生命线进度
         window.addEventListener('scroll', () => {
             if(lifeLine.style.opacity === '1') {
                 const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
