@@ -8,13 +8,19 @@
     <meta name="robots" content="noindex, nofollow">
     <meta name="googlebot" content="noindex">
 
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%230a0a0a%22/><circle cx=%2250%22 cy=%2250%22 r=%2230%22 fill=%22%236e1b1b%22/></svg>">
+
+    <meta property="og:title" content="人生如此">
+    <meta property="og:description" content="绝笔。">
+    <meta property="og:image" content="https://via.placeholder.com/500x500/000000/6e1b1b?text=RSRC">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;700&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --bg-color: #080808;
+            --bg-color: #0a0a0a;
             --text-color: #888;
             --highlight: #e0e0e0;
             --accent: #6e1b1b;
@@ -24,7 +30,6 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        /* 选中文字变成血色 */
         ::selection { background: var(--accent); color: #fff; }
 
         body {
@@ -38,13 +43,11 @@
             -webkit-font-smoothing: antialiased;
             transition: background-color 3s ease;
             font-weight: 300;
-            /* 优化点1：濒死闪烁 (页面整体微弱忽明忽暗) */
-            animation: dying-light 10s infinite linear; 
+            animation: dying-light 12s infinite linear; /* 濒死闪烁 */
         }
 
         body.dark-mode { background-color: #000; }
 
-        /* 优化点3：生命线 (解封后出现) */
         #life-line {
             position: fixed;
             top: 0;
@@ -58,7 +61,6 @@
             opacity: 0; 
         }
 
-        /* 优化点2：隧道暗角 (Vignette) - 增加压抑感 */
         .vignette-overlay {
             position: fixed;
             top: 0;
@@ -67,11 +69,10 @@
             height: 100%;
             pointer-events: none;
             z-index: 90;
-            background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.8) 100%);
+            background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.85) 100%);
             opacity: 0.8;
         }
 
-        /* 胶片噪点 */
         .grain-overlay {
             position: fixed;
             top: 0;
@@ -84,7 +85,6 @@
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
-        /* 开场遮罩 */
         #start-screen {
             position: fixed;
             top: 0;
@@ -118,7 +118,6 @@
             opacity: 0.7;
         }
 
-        /* 封面 */
         header {
             height: 100vh;
             width: 100%;
@@ -146,7 +145,6 @@
             text-shadow: 0 0 20px rgba(0,0,0,1);
         }
 
-        /* 交互印章 */
         #author-seal {
             font-size: 1rem;
             color: var(--accent);
@@ -176,7 +174,6 @@
         }
         #author-seal:hover::after { opacity: 1; }
 
-        /* 震颤动画 */
         #author-seal.shaking {
             animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
         }
@@ -198,7 +195,6 @@
             padding-left: 20px;
         }
 
-        /* 正文区 */
         .container {
             max-width: 580px;
             margin: 0 auto;
@@ -224,7 +220,6 @@
             filter: blur(0);
         }
 
-        /* 日记碎片 */
         .diary-entry {
             text-align: right;
             margin: 0 0 150px auto; 
@@ -241,7 +236,6 @@
         .diary-date { color: var(--accent); margin-bottom: 8px; opacity: 0.9; letter-spacing: 1px; }
         .diary-text { color: #555; font-style: italic; line-height: 1.8; }
 
-        /* 文本样式 */
         .prompt-text {
             display: block;
             text-align: center;
@@ -290,7 +284,6 @@
             margin-top: 100px;
         }
 
-        /* 动画库 */
         @keyframes breathe {
             0%, 100% { opacity: 0.3; transform: scale(1); }
             50% { opacity: 0.8; transform: scale(1.3); }
@@ -309,20 +302,12 @@
             30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
             40%, 60% { transform: translate3d(4px, 0, 0); }
         }
-        /* 濒死闪烁：极不规律的明暗变化 */
         @keyframes dying-light {
-            0% { opacity: 1; }
-            3% { opacity: 0.95; }
-            5% { opacity: 1; }
-            25% { opacity: 1; }
-            27% { opacity: 0.9; }
-            30% { opacity: 1; }
-            60% { opacity: 1; }
-            61% { opacity: 0.92; }
-            62% { opacity: 1; }
-            95% { opacity: 1; }
-            97% { opacity: 0.85; }
-            100% { opacity: 1; }
+            0%, 100% { opacity: 1; }
+            25% { opacity: 0.95; }
+            50% { opacity: 1; }
+            75% { opacity: 0.9; }
+            95% { opacity: 0.8; }
         }
 
         @media (max-width: 600px) {
@@ -488,7 +473,6 @@
         authorSeal.addEventListener('click', () => {
             if (authorSeal.classList.contains('dead')) return;
 
-            // 交互震颤 + 变身
             authorSeal.classList.add('shaking');
             
             setTimeout(() => {
@@ -496,10 +480,7 @@
                 authorSeal.classList.add('dead');
                 authorSeal.innerText = "绝笔"; 
                 body.classList.add('dark-mode');
-                
-                // 显示生命线
                 lifeLine.style.opacity = '1';
-
                 content.classList.add('revealed');
                 
                 setTimeout(() => {
@@ -509,7 +490,7 @@
             }, 500);
         });
 
-        // 优化点3：标签页呼唤 (卑微的生命力)
+        // 标签页呼唤 (微交互)
         document.addEventListener('visibilitychange', function() {
             if (document.hidden) {
                 document.title = "别走……";
@@ -542,4 +523,3 @@
     </script>
 </body>
 </html>
-
