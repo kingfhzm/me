@@ -179,12 +179,12 @@
             filter: blur(0);
         }
 
-        /* --- 模块1：时间碎片 (日记) 样式 --- */
+        /* 日记碎片样式 */
         .diary-entry {
             text-align: right;
-            margin: 0 0 150px auto; /* 靠右，增加间距 */
+            margin: 0 0 150px auto; 
             max-width: 280px;
-            opacity: 0; /* 初始隐藏，随滚动显示 */
+            opacity: 0; 
             border-right: 1px solid #222;
             padding-right: 20px;
             font-size: 0.8rem;
@@ -196,40 +196,6 @@
         
         .diary-date { color: var(--accent); margin-bottom: 8px; opacity: 0.9; letter-spacing: 1px; }
         .diary-text { color: #555; font-style: italic; line-height: 1.8; }
-
-        /* --- 模块2：隐藏词典 (交互注解) 样式 --- */
-        .hidden-term {
-            border-bottom: 1px dashed #444;
-            cursor: help;
-            position: relative;
-            transition: all 0.3s;
-            color: #a0a0a0;
-        }
-        .hidden-term:hover {
-            color: var(--accent);
-            border-bottom-color: var(--accent);
-        }
-        /* 悬停显示的定义 */
-        .hidden-term:hover::after {
-            content: attr(data-def);
-            position: absolute;
-            bottom: 140%; /* 显示在上方 */
-            left: 50%;
-            transform: translateX(-50%);
-            background: #000;
-            border: 1px solid #333;
-            color: #ccc;
-            padding: 8px 12px;
-            font-size: 0.75rem;
-            white-space: nowrap;
-            z-index: 10;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.8);
-            opacity: 0;
-            animation: tooltipFade 0.3s forwards;
-            pointer-events: none;
-        }
-        /* 手机端点击时的高亮状态 */
-        .hidden-term:active::after { opacity: 1; }
 
         /* 文本样式 */
         .prompt-text {
@@ -292,12 +258,10 @@
             0%, 100% { opacity: 0.5; }
             50% { opacity: 0.8; text-shadow: 0 0 10px rgba(255,255,255,0.1); }
         }
-        @keyframes tooltipFade { from { opacity: 0; transform: translate(-50%, 10px); } to { opacity: 1; transform: translate(-50%, 0); } }
 
         @media (max-width: 600px) {
             h1 { font-size: 2.8rem; }
             .container { padding: 50px 25px 150px; }
-            /* 手机端日记调整 */
             .diary-entry { margin-right: 10px; font-size: 0.75rem; }
         }
     </style>
@@ -329,7 +293,7 @@
         <div class="content-block">
             <span class="prompt-text">“现实会逼着你把监狱装修得更辉煌”</span>
             <p class="response-text">我听见了。</p>
-            <p class="response-text">我把<span class="hidden-term" data-def="一张用来遮丑的面具">笑容</span>刷了一层又一层，像一层体面的墙纸。</p>
+            <p class="response-text">我把笑容刷了一层又一层，像一层体面的墙纸。</p>
             <p class="response-text">我把自己关在里面，怕有人透过缝隙，看见缩在墙角的那个小孩。</p>
             <p class="response-text highlight-text">我怕他们看见我哭，更怕他们看见了，却假装没看见。</p>
         </div>
@@ -343,52 +307,67 @@
             <span class="prompt-text">“我把心调到 1%”</span>
             <p class="response-text">不是为了省电，是因为我不敢满电。</p>
             <p class="response-text">屏幕常亮着，像是一个在等信号的求救者。</p>
-            <p class="response-text">我不敢<span class="hidden-term" data-def="意味着承认我彻底死了">关机</span>。关机了，就连这最后一点微弱的光也没了。</p>
+            <p class="response-text">我不敢关机。关机了，就连这最后一点微弱的光也没了。</p>
             <p class="response-text highlight-text">那就真的只剩黑暗了。</p>
+        </div>
+
+        <div class="diary-entry">
+            <div class="diary-date">2019.03.15</div>
+            <div class="diary-text">停药的第三天。世界安静得像一部默片。我终于不用假装听得懂他们在笑什么了。</div>
         </div>
 
         <div class="content-block">
             <span class="prompt-text">“来了是不是又是对我的一场天灾”</span>
             <p class="response-text">我不怕天灾，我怕我是那场雨。</p>
-            <p class="response-text">我拼命把<span class="hidden-term" data-def="一种会让我粉身碎骨的奢望">靠近</span>往外推，推到自己心都在抖。</p>
+            <p class="response-text">我拼命把你往外推，推到自己心都在抖。</p>
             <p class="response-text">我提前把自己锁起来，不是拒绝温暖，是怕我身上的寒气，冻伤了你。</p>
         </div>
 
         <div class="diary-entry">
-            <div class="diary-date">2021.06.12</div>
-            <div class="diary-text">我养的狗死了。我没哭。我只是羡慕它。</div>
+            <div class="diary-date">2020.05.20</div>
+            <div class="diary-text">凌晨三点。我在看天花板慢慢变白。我想，如果我就这么消失了，床单会记得我吗。</div>
         </div>
 
         <div class="content-block">
             <span class="prompt-text">“爱不会让你有呼吸可言”</span>
             <p class="response-text">他们说这是为我好。我笑着说“谢谢”。</p>
-            <p class="response-text">我习惯了在稀薄的空气里呼吸，把这种压抑当成了<span class="hidden-term" data-def="被捆绑时的麻木">安全感</span>。</p>
+            <p class="response-text">我习惯了在稀薄的空气里呼吸，把这种压抑当成了安全感。</p>
             <p class="response-text">好像只有被紧紧束缚着，我才觉得自己没有被抛弃。</p>
+        </div>
+
+        <div class="diary-entry">
+            <div class="diary-date">2021.06.12</div>
+            <div class="diary-text">我养的狗死了。我没哭。我只是羡慕它，走得那么干脆。</div>
         </div>
 
         <div class="content-block">
             <span class="prompt-text">“我渴望被爱 拥抱 贪婪”</span>
             <p class="response-text">这种渴望让我觉得自己像个还没长大的孩子。</p>
-            <p class="response-text">我想伸手要一颗<span class="hidden-term" data-def="短暂的、有毒的甜头">糖</span>，又怕被人笑话不懂事。</p>
+            <p class="response-text">我想伸手要一颗糖，又怕被人笑话不懂事。</p>
             <p class="response-text highlight-text">我饿得发慌，却还要装作从容的样子，把手背在身后。</p>
         </div>
-        
-        <div class="diary-entry">
-            <div class="diary-date">2023.12.25</div>
-            <div class="diary-text">在热闹的节日里，我关上了窗。世界死了，我还活着。</div>
-        </div>
 
+        <div class="diary-entry">
+            <div class="diary-date">2022.09.15</div>
+            <div class="diary-text">医生问我：“如果不为了别人，你自己想活吗？” 我愣了很久，找不到理由。</div>
+        </div>
+        
         <div class="content-block">
             <span class="prompt-text">“反反复复揭开早已愈合的伤口”</span>
             <p class="response-text">不是为了疼，是为了记得。</p>
             <p class="response-text">我怕伤口好了，我就忘了当初是怎么活过来的。</p>
-            <p class="response-text highlight-text">痛觉是我确认自己还<span class="hidden-term" data-def="也许根本就不存在">存在</span>的唯一方式。</p>
+            <p class="response-text highlight-text">痛觉是我确认自己还存在的唯一方式。</p>
         </div>
 
         <div class="content-block">
             <span class="prompt-text">“这是枷锁”</span>
             <p class="response-text">我给自己打了个死结。</p>
             <p class="response-text">有时候我甚至感谢这个结，因为它拽着我，没让我彻底飘进虚无里。</p>
+        </div>
+        
+        <div class="diary-entry">
+            <div class="diary-date">2023.12.25</div>
+            <div class="diary-text">在热闹的节日里，我关上了窗。世界死了，我还活着。</div>
         </div>
 
         <div class="content-block final-chapter">
@@ -461,7 +440,6 @@
             });
         }, { threshold: 0.1 });
 
-        // 监听正文块 和 日记块
         document.querySelectorAll('.content-block, .diary-entry').forEach((block) => {
             observer.observe(block);
         });
