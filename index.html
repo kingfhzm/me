@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>人生如此 | 谦总</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;700&display=swap" rel="stylesheet">
+
     <style>
         /* --- 核心美学 --- */
         :root {
@@ -12,7 +17,8 @@
             --highlight: #e0e0e0;
             --accent: #6e1b1b;
             --dead-grey: #333;
-            --font-main: "Songti SC", "Noto Serif SC", "SimSun", serif;
+            /* 优先使用思源宋体，回退到系统宋体 */
+            --font-main: "Noto Serif SC", "Songti SC", "SimSun", serif;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -27,6 +33,7 @@
             overflow: hidden;
             -webkit-font-smoothing: antialiased;
             transition: background-color 3s ease;
+            font-weight: 300; /* 字体更细更精致 */
         }
 
         body.dark-mode { background-color: #000; }
@@ -101,7 +108,7 @@
         h1 {
             font-size: 3.5rem;
             color: var(--highlight);
-            font-weight: normal;
+            font-weight: 400; /* 使用思源宋体的标准字重 */
             letter-spacing: 15px;
             text-shadow: 0 0 20px rgba(0,0,0,1);
         }
@@ -188,7 +195,7 @@
             border-right: 1px solid #222;
             padding-right: 20px;
             font-size: 0.8rem;
-            font-family: monospace;
+            font-family: monospace; /* 日记保持机械感 */
             transform: translateY(30px);
             transition: all 2.5s ease;
         }
