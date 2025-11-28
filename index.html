@@ -15,27 +15,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@200;300;400;500&display=swap" rel="stylesheet">
 
     <style>
-        /* --- 导演剪辑版 · 视觉规范 --- */
         :root {
-            --bg-color: #000000;       /* 纯黑基底 */
-            --text-primary: #f2f2f2;   /* 电影白 */
-            --text-secondary: #888888; /* 字幕灰 */
-            --accent: #8a1c1c;         /* 凝固血色 */
+            --bg-color: #000000;       
+            --text-primary: #f2f2f2;   
+            --text-secondary: #888888; 
+            --accent: #8a1c1c;         
             --font-main: "Noto Serif SC", "Songti SC", serif;
-            
-            /* 电影级缓动曲线 (极慢、优雅) */
             --ease-cinematic: cubic-bezier(0.22, 1, 0.36, 1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        /* 选中态：血色背景 */
         ::selection { background: var(--accent); color: #fff; }
-
-        html {
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
 
         body {
             background-color: var(--bg-color);
@@ -45,11 +36,25 @@
             font-size: 16px;
             font-weight: 300;
             min-height: 100vh;
-            overflow: hidden; /* 初始锁屏 */
+            overflow: hidden;
             transition: background-color 3s ease;
         }
 
-        /* --- 顶部生命线 (进度条) --- */
+        /* 电影遮幅 */
+        .letterbox {
+            position: fixed;
+            left: 0;
+            width: 100%;
+            height: 0;
+            background-color: #000;
+            z-index: 800;
+            transition: height 2.5s var(--ease-cinematic);
+            pointer-events: none;
+        }
+        .letterbox.top { top: 0; }
+        .letterbox.bottom { bottom: 0; }
+        body.cinema-mode .letterbox { height: 10vh; }
+
         #life-line {
             position: fixed;
             top: 0;
@@ -63,7 +68,6 @@
             opacity: 0;
         }
 
-        /* --- 胶片噪点 (增强质感) --- */
         .grain-overlay {
             position: fixed;
             top: 0;
@@ -76,7 +80,7 @@
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
-        /* --- 开场遮罩 --- */
+        /* --- 开场 --- */
         #start-screen {
             position: fixed;
             top: 0;
@@ -93,27 +97,42 @@
             cursor: pointer;
         }
 
+        #intro-text-container {
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            position: relative;
+        }
+
+        .intro-phrase {
+            position: absolute;
+            font-size: 13px;
+            color: #666;
+            letter-spacing: 0.3em;
+            opacity: 0;
+            font-weight: 300;
+            transition: opacity 1.5s ease, transform 1.5s ease;
+            transform: translateY(10px);
+            white-space: nowrap;
+        }
+
+        .intro-phrase.active { opacity: 1; transform: translateY(0); }
+
         .breathing-point {
             width: 6px;
             height: 6px;
-            background-color: var(--text-primary);
+            background-color: var(--accent);
             border-radius: 50%;
-            opacity: 0.6;
-            animation: breathe 5s infinite ease-in-out;
-            margin-bottom: 40px;
-            box-shadow: 0 0 20px rgba(255,255,255,0.3);
+            opacity: 0;
+            animation: breathe 4s infinite ease-in-out;
+            margin-bottom: 30px;
+            transition: opacity 1s;
+            box-shadow: 0 0 15px rgba(138, 28, 28, 0.5);
         }
 
-        .enter-text {
-            font-size: 11px;
-            letter-spacing: 0.5em;
-            text-transform: uppercase;
-            color: #444;
-            transition: color 0.8s ease;
-        }
-        #start-screen:hover .enter-text { color: #888; }
-
-        /* --- 封面区 (竖排艺术) --- */
+        /* --- 封面 --- */
         header {
             height: 100vh;
             width: 100%;
@@ -141,7 +160,7 @@
             text-shadow: 0 0 30px rgba(0,0,0,0.8);
         }
 
-        /* 交互印章 */
+        /* --- 印章交互 (核心修改) --- */
         #author-seal {
             font-size: 14px;
             color: var(--accent);
@@ -155,24 +174,26 @@
             position: relative;
         }
         
+        /* 修改点：印章侧边文案 */
         #author-seal::after {
-            content: "点击解封";
+            content: "没人想要 坏掉的小孩"; /* 凄美自白 */
             position: absolute;
-            left: -40px;
+            left: -80px;  /* 调整位置以容纳长句 */
+            width: 200px; /* 增加宽度 */
             top: 50%;
             transform: translateY(-50%) rotate(90deg);
             font-size: 10px;
             color: #444;
             opacity: 0;
-            transition: opacity 0.5s ease;
+            transition: opacity 1s ease; /* 浮现得更慢 */
             pointer-events: none;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
             white-space: nowrap;
+            font-weight: 300;
         }
         #author-seal:hover { opacity: 1; box-shadow: 0 0 25px rgba(138, 28, 28, 0.15); }
-        #author-seal:hover::after { opacity: 1; }
+        #author-seal:hover::after { opacity: 0.8; }
 
-        /* 状态：已死 */
         #author-seal.dead {
             border-color: #333;
             color: #333;
@@ -190,7 +211,7 @@
             padding-left: 24px;
         }
 
-        /* --- 正文容器 --- */
+        /* --- 正文 --- */
         .container {
             max-width: 620px;
             margin: 0 auto;
@@ -205,12 +226,11 @@
             margin-bottom: 180px;
             opacity: 0;
             transform: translateY(30px);
-            filter: blur(12px); /* 初始模糊更重，模拟泪眼 */
+            filter: blur(12px);
             transition: all 2s var(--ease-cinematic);
         }
         .content-block.visible { opacity: 1; transform: translateY(0); filter: blur(0); }
 
-        /* 日记碎片 (模块1：V11保留) */
         .diary-entry {
             text-align: right;
             margin: 0 0 180px auto; 
@@ -220,14 +240,13 @@
             padding-right: 16px;
             font-size: 12px;
             color: #555;
-            font-family: monospace; /* 机械感 */
+            font-family: monospace;
             transform: translateY(20px);
             transition: all 2s var(--ease-cinematic);
         }
         .diary-entry.visible { opacity: 1; transform: translateY(0); }
         .diary-date { color: var(--accent); margin-bottom: 8px; opacity: 0.8; letter-spacing: 1px; }
 
-        /* 文本排版 */
         .prompt-text {
             display: block;
             text-align: center;
@@ -253,30 +272,52 @@
             font-style: italic;
         }
 
+        /* --- 终章：救赎排版 --- */
         .final-chapter {
             text-align: center;
             margin-top: 280px;
+            min-height: 60vh; /* 留出足够的空间 */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
-        .final-q {
-            font-size: 1.2rem;
+        /* 大字的“救赎” */
+        .final-redemption {
+            font-size: 2.5rem;
             letter-spacing: 0.5em;
             color: var(--text-primary);
-            opacity: 0.6;
-            margin-top: 140px;
-            font-weight: 200;
+            opacity: 0; /* 初始隐藏，用JS控制显示 */
+            margin-top: 100px;
+            font-weight: 300;
+            text-shadow: 0 0 20px rgba(255,255,255,0.1);
+            transition: opacity 3s ease;
         }
+        
+        /* 你的期待 */
+        .final-whisper {
+            font-size: 12px;
+            color: var(--accent);
+            letter-spacing: 0.3em;
+            margin-top: 40px;
+            opacity: 0;
+            font-weight: 300;
+            transition: opacity 3s ease 1.5s; /* 延迟 1.5s 显示 */
+        }
+
+        .final-chapter.visible .final-redemption { opacity: 0.8; }
+        .final-chapter.visible .final-whisper { opacity: 0.6; }
 
         footer {
             text-align: center;
             font-size: 10px;
             color: #222;
             letter-spacing: 0.3em;
-            margin-top: 150px;
+            margin-top: 50px;
             text-transform: uppercase;
         }
 
-        /* --- 动画库 --- */
         @keyframes breathe {
             0%, 100% { opacity: 0.3; transform: scale(1); }
             50% { opacity: 0.8; transform: scale(1.2); }
@@ -292,11 +333,14 @@
             h1 { font-size: 2.6rem; }
             .container { padding: 80px 24px 150px; }
             .diary-entry { margin-right: 0; text-align: left; border-right: none; border-left: 1px solid #222; padding-left: 16px; }
+            .final-redemption { font-size: 1.8rem; letter-spacing: 0.3em; }
         }
     </style>
 </head>
 <body>
 
+    <div class="letterbox top"></div>
+    <div class="letterbox bottom"></div>
     <div id="life-line"></div>
 
     <audio id="bgm" loop preload="auto">
@@ -306,8 +350,12 @@
     <div class="grain-overlay"></div>
 
     <div id="start-screen">
-        <div class="breathing-point"></div>
-        <div class="enter-text">Enter</div>
+        <div class="breathing-point" id="start-dot"></div>
+        <div id="intro-text-container">
+            <span class="intro-phrase" id="p1">没人想要坏掉的小孩。</span>
+            <span class="intro-phrase" id="p2">但我修不好了。</span>
+            <span class="intro-phrase" id="p3">进来吧。</span>
+        </div>
     </div>
 
     <header id="main-header">
@@ -322,103 +370,101 @@
         
         <div class="content-block">
             <span class="prompt-text">“现实会逼着你把监狱装修得更辉煌”</span>
-            <p class="response-text">我听见了。</p>
-            <p class="response-text">我把笑容刷了一层又一层，像一层体面的墙纸。</p>
-            <p class="response-text">我把自己关在里面，怕有人透过缝隙，看见缩在墙角的那个小孩。</p>
-            <p class="response-text highlight-text">我怕他们看见我哭，更怕他们看见了，却假装没看见。</p>
+            <p class="response-text">我不再修补这座牢笼了，也不再粉饰墙壁。</p>
+            <p class="response-text">以前我努力扮演一个正常人，像是在废墟上搭建舞台。</p>
+            <p class="response-text">现在我坐在灰烬里。体面是给观众看的，荒芜才是我。</p>
+            <p class="response-text highlight-text">这种日复一日的表演，我倦了。</p>
         </div>
 
         <div class="diary-entry">
             <div class="diary-date">2018.11.04</div>
-            <div class="diary-text">那是第一次，我觉得路灯太亮了，刺得我眼泪流个不停。</div>
+            <div class="diary-text">第一次意识到，路灯的光不仅刺眼，而且寒冷。</div>
         </div>
 
         <div class="content-block">
-            <span class="prompt-text">“我把心调到 1%”</span>
-            <p class="response-text">不是为了省电，是因为我不敢满电。</p>
-            <p class="response-text">屏幕常亮着，像是一个在等信号的求救者。</p>
-            <p class="response-text">我不敢关机。关机了，就连这最后一点微弱的光也没了。</p>
-            <p class="response-text highlight-text">那就真的只剩黑暗了。</p>
+            <span class="prompt-text">“我将生命体征下调至 1%”</span>
+            <p class="response-text">这不是待机，是<strong>强制冬眠</strong>。</p>
+            <p class="response-text">我切断了所有不必要的感知电路，只保留最后一点微弱的呼吸。</p>
+            <p class="response-text">在这个过载的世界里，<strong>麻木，是我唯一的绝缘体。</strong></p>
+            <p class="response-text highlight-text">只有不再感知热度，才不会被烫伤。</p>
         </div>
 
         <div class="diary-entry">
             <div class="diary-date">2019.03.15</div>
-            <div class="diary-text">停药的第三天。世界安静得像一部默片。</div>
+            <div class="diary-text">停药的第三天。世界安静得像一部默片。我终于不用假装听得懂他们在笑什么了。</div>
         </div>
 
         <div class="content-block">
-            <span class="prompt-text">“来了是不是又是对我的一场天灾”</span>
-            <p class="response-text">我不怕天灾，我怕我是那场雨。</p>
-            <p class="response-text">我拼命把你往外推，推到自己心都在抖。</p>
-            <p class="response-text">我提前把自己锁起来，不是拒绝温暖，是怕我身上的寒气，冻伤了你。</p>
+            <span class="prompt-text">“你的靠近，是一次未经计算的地质灾害”</span>
+            <p class="response-text">我不怕冷。在绝对零度里，我是安全的。</p>
+            <p class="response-text">我真正恐惧的，是你带来的那一点点温度。</p>
+            <p class="response-text">冻僵的肢体在解冻时会有剧痛。<strong>我承受不起那种复苏的代价。</strong></p>
+            <p class="response-text highlight-text">请允许我继续做一块冰。这是对他人的慈悲。</p>
         </div>
 
         <div class="diary-entry">
             <div class="diary-date">2020.05.20</div>
-            <div class="diary-text">凌晨三点。我在看天花板慢慢变白。我想，如果我就这么消失了，床单会记得我吗。</div>
+            <div class="diary-text">凌晨三点。看着天花板一点点变白。这种清醒的煎熬，比噩梦更像惩罚。</div>
         </div>
 
         <div class="content-block">
             <span class="prompt-text">“爱不会让你有呼吸可言”</span>
-            <p class="response-text">他们说这是为我好。我笑着说“谢谢”。</p>
-            <p class="response-text">我习惯了在稀薄的空气里呼吸，把这种压抑当成了安全感。</p>
-            <p class="response-text">好像只有被紧紧束缚着，我才觉得自己没有被抛弃。</p>
+            <p class="response-text">我曾经以为窒息是外界的挤压。</p>
+            <p class="response-text">后来才发现，是我在这个稀薄的维度里，早已丧失了换气的能力。</p>
+            <p class="response-text">每一次呼吸，都像是在吸入碎玻璃。</p>
         </div>
 
         <div class="diary-entry">
             <div class="diary-date">2021.06.12</div>
-            <div class="diary-text">我养的狗死了。我没哭。我只是羡慕它，走得那么干脆。</div>
+            <div class="diary-text">那条狗死了。它走得很干脆。我看着它僵硬的身体，竟然产生了一种名为“羡慕”的情绪。</div>
         </div>
 
         <div class="content-block">
             <span class="prompt-text">“我渴望被爱 拥抱 贪婪”</span>
-            <p class="response-text">这种渴望让我觉得自己像个还没长大的孩子。</p>
-            <p class="response-text">我想伸手要一颗糖，又怕被人笑话不懂事。</p>
-            <p class="response-text highlight-text">我饿得发慌，却还要装作从容的样子，把手背在身后。</p>
+            <p class="response-text">这种渴望如今变得像是一种陈旧的幻肢痛。</p>
+            <p class="response-text">明知道那里什么都没有，神经末梢却还在疯狂地传递着瘙痒。</p>
+            <p class="response-text highlight-text">我不再伸手了。我学会了对虚空保持沉默。</p>
         </div>
 
         <div class="diary-entry">
             <div class="diary-date">2022.09.15</div>
-            <div class="diary-text">医生问我：“如果不为了别人，你自己想活吗？” 我愣了很久，找不到理由。</div>
+            <div class="diary-text">医生问：“抛开一切责任，你自己还想存在吗？” 那个瞬间，我找不到任何理由点头。</div>
         </div>
         
         <div class="content-block">
             <span class="prompt-text">“反反复复揭开早已愈合的伤口”</span>
-            <p class="response-text">不是为了疼，是为了记得。</p>
-            <p class="response-text">我怕伤口好了，我就忘了当初是怎么活过来的。</p>
-            <p class="response-text highlight-text">痛觉是我确认自己还存在的唯一方式。</p>
+            <p class="response-text">我需要确定我还是物质的，而不是虚无的。</p>
+            <p class="response-text">在这具逐渐麻木的躯壳里，痛感是我确认自己还存在的唯一方式。</p>
+            <p class="response-text highlight-text">如果连痛都没了，我就真的消失了。</p>
         </div>
 
         <div class="content-block">
             <span class="prompt-text">“这是枷锁”</span>
-            <p class="response-text">我给自己打了个死结。</p>
-            <p class="response-text">有时候我甚至感谢这个结，因为它拽着我，没让我彻底飘进虚无里。</p>
+            <p class="response-text">我亲手给自己打了个死结。</p>
+            <p class="response-text">在这个失重的世界里，也许只有这个结，还能拽住我一点点。</p>
         </div>
         
         <div class="diary-entry">
             <div class="diary-date">2023.12.25</div>
-            <div class="diary-text">在热闹的节日里，我关上了窗。世界死了，我还活着。</div>
+            <div class="diary-text">窗外灯火通明。我拉上了窗帘。剧终。</div>
         </div>
 
         <div class="content-block final-chapter">
             <span class="prompt-text" style="color: var(--accent);">你值得吗</span>
             <br>
-            <p class="response-text">我听见了。这三个字那么轻，却压得我喘不过气。</p>
-            <p class="response-text">我问了一千次，删了一千次。</p>
+            <p class="response-text">这个问题悬在半空，像一把迟迟不肯落下的闸刀。</p>
+            <p class="response-text">我审视过自己的一生，乏善可陈，满目疮痍。</p>
             <br>
-            <p class="response-text">我站在这里，像个做错了事的孩子，浑身泥泞。</p>
-            <p class="response-text">我不敢看你的眼睛，却又不想走。</p>
-            <p class="response-text">我用尽了所有的勇气，声音沙哑地问你：</p>
-            <p class="response-text" style="text-align: center; margin: 60px 0; letter-spacing: 0.2em; color: var(--text-primary);">我……配……吗……</p>
+            <p class="response-text">我不需要审判。</p>
+            <p class="response-text">我只是累了。</p>
+            <p class="response-text">像是走了一条很远很远的路，鞋子磨穿了，脚也烂了，却发现尽头是一堵墙。</p>
+            <p class="response-text">我想坐下来。就在这里。</p>
             <br>
-            <p class="response-text">我怕你笑。怕你转身就走。</p>
-            <p class="response-text">怕你礼貌地说：“你不配。”</p>
-            <br>
-            <p class="response-text">你没说。你只是看着。</p>
-            <p class="response-text">我碎了。</p>
-            <p class="response-text">你值得吗。我问了。我碎了。</p>
+            <p class="response-text">不走了。</p>
+            <p class="response-text">天快黑了。</p>
 
-            <div class="final-q">我也有吗。</div>
+            <div class="final-redemption">救赎。</div>
+            <div class="final-whisper">我也期待我的救赎。</div>
         </div>
 
         <footer>
@@ -435,38 +481,43 @@
         const authorSeal = document.getElementById('author-seal');
         const body = document.body;
         const lifeLine = document.getElementById('life-line');
+        const startDot = document.getElementById('start-dot');
 
-        // 1. 开场逻辑 (点击进入)
+        window.addEventListener('load', () => {
+            const p1 = document.getElementById('p1');
+            const p2 = document.getElementById('p2');
+            const p3 = document.getElementById('p3');
+
+            setTimeout(() => { p1.classList.add('active'); }, 500);
+            setTimeout(() => { p1.classList.remove('active'); }, 3000);
+            setTimeout(() => { p2.classList.add('active'); }, 3500);
+            setTimeout(() => { p2.classList.remove('active'); }, 6000);
+            setTimeout(() => { 
+                p3.classList.add('active'); 
+                startDot.style.opacity = '1';
+            }, 6500);
+        });
+
         startScreen.addEventListener('click', () => {
             bgm.volume = 0.6;
             bgm.play().catch(e => console.log(e));
-            
             startScreen.style.opacity = '0';
             setTimeout(() => {
                 startScreen.style.display = 'none';
                 header.style.opacity = '1';
-            }, 1500); // 配合 CSS 的 1.5s 过渡
+            }, 2000);
         });
 
-        // 2. 印章逻辑 (点击解封)
         authorSeal.addEventListener('click', () => {
             if (authorSeal.classList.contains('dead')) return;
-
-            // 震颤
             authorSeal.classList.add('shaking');
             
             setTimeout(() => {
                 authorSeal.classList.remove('shaking');
                 authorSeal.classList.add('dead');
                 authorSeal.innerText = "绝笔"; 
-                
-                // 变暗背景
-                body.style.backgroundColor = '#030303'; 
-                
-                // 显示生命线
+                body.classList.add('cinema-mode'); // 开启遮幅
                 lifeLine.style.opacity = '1';
-
-                // 显示内容
                 content.classList.add('revealed');
                 
                 setTimeout(() => {
@@ -476,7 +527,6 @@
             }, 500);
         });
 
-        // 3. 标签页呼唤
         document.addEventListener('visibilitychange', function() {
             if (document.hidden) {
                 document.title = "别走……";
@@ -485,7 +535,6 @@
             }
         });
 
-        // 4. 滚动观察器
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -493,13 +542,12 @@
                     observer.unobserve(entry.target); 
                 }
             });
-        }, { threshold: 0.1 });
+        }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
 
         document.querySelectorAll('.content-block, .diary-entry').forEach((block) => {
             observer.observe(block);
         });
 
-        // 5. 顶部生命线进度
         window.addEventListener('scroll', () => {
             if(lifeLine.style.opacity === '1') {
                 const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
