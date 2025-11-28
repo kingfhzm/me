@@ -3,8 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#000000">
-    <meta name="description" content="绝笔。">
     <title>人生如此 | 谦总</title>
     
     <meta name="robots" content="noindex, nofollow">
@@ -17,50 +15,40 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@200;300;400;500&display=swap" rel="stylesheet">
 
     <style>
-        /* --- 全局变量系统 --- */
         :root {
-            /* 调色板 */
-            --bg-color: #000000;
-            --text-primary: #f2f2f2;
-            --text-secondary: #888888;
-            --text-dim: #444444;
-            --accent: #8a1c1c; /* 凝固血色 */
-            
-            /* 字体 */
+            --bg-color: #000000;       
+            --text-primary: #f2f2f2;   
+            --text-secondary: #888888; 
+            --accent: #8a1c1c;         
+            --dead-grey: #333;
             --font-main: "Noto Serif SC", "Songti SC", serif;
-            
-            /* 动效曲线 */
             --ease-cinematic: cubic-bezier(0.22, 1, 0.36, 1);
-            --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        /* --- 基础重置 --- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        ::selection { background: var(--accent); color: #fff; }
 
-        html {
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            scroll-behavior: smooth;
-        }
+        ::selection { background: var(--accent); color: #fff; }
 
         body {
             background-color: var(--bg-color);
             color: var(--text-secondary);
             font-family: var(--font-main);
             line-height: 2.6;
-            /* 流体字体：在不同屏幕下自动缩放 */
-            font-size: clamp(14px, 2vw, 16px);
+            font-size: 16px;
             font-weight: 300;
             min-height: 100vh;
-            overflow: hidden; /* 初始锁屏 */
+            /* 初始状态：锁定滚动 */
+            overflow: hidden; 
             transition: background-color 3s ease;
+            animation: dying-light 15s infinite linear;
+        }
+        
+        /* 强制锁定滚动时的状态 */
+        body.scroll-locked {
+            overflow: hidden !important;
         }
 
-        /* --- 视觉层级组件 --- */
-
-        /* 1. 电影遮幅 */
+        /* 电影遮幅 */
         .letterbox {
             position: fixed;
             left: 0;
@@ -70,13 +58,11 @@
             z-index: 800;
             transition: height 2.5s var(--ease-cinematic);
             pointer-events: none;
-            will-change: height;
         }
         .letterbox.top { top: 0; }
         .letterbox.bottom { bottom: 0; }
         body.cinema-mode .letterbox { height: 10vh; }
 
-        /* 2. 生命线 (进度条) */
         #life-line {
             position: fixed;
             top: 0;
@@ -88,10 +74,8 @@
             box-shadow: 0 0 10px var(--accent);
             transition: width 0.1s linear;
             opacity: 0;
-            will-change: width;
         }
 
-        /* 3. 胶片噪点 */
         .grain-overlay {
             position: fixed;
             top: 0;
@@ -104,7 +88,7 @@
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
-        /* --- 场景：开场遮罩 --- */
+        /* 开场遮罩 */
         #start-screen {
             position: fixed;
             top: 0;
@@ -133,7 +117,7 @@
         .intro-phrase {
             position: absolute;
             font-size: 13px;
-            color: var(--text-secondary);
+            color: #666;
             letter-spacing: 0.3em;
             opacity: 0;
             font-weight: 300;
@@ -141,6 +125,7 @@
             transform: translateY(10px);
             white-space: nowrap;
         }
+
         .intro-phrase.active { opacity: 1; transform: translateY(0); }
 
         .breathing-point {
@@ -155,7 +140,7 @@
             box-shadow: 0 0 15px rgba(138, 28, 28, 0.5);
         }
 
-        /* --- 场景：封面 --- */
+        /* 封面 */
         header {
             height: 100vh;
             width: 100%;
@@ -164,7 +149,6 @@
             align-items: center;
             opacity: 0;
             transition: opacity 2.5s var(--ease-cinematic);
-            will-change: opacity;
         }
 
         .vertical-title-box {
@@ -172,11 +156,11 @@
             text-orientation: mixed;
             display: flex;
             align-items: center;
-            gap: clamp(20px, 5vh, 40px); /* 响应式间距 */
+            gap: 32px;
         }
 
         h1 {
-            font-size: clamp(2.5rem, 5vw, 3.5rem); /* 响应式大标题 */
+            font-size: 3.2rem;
             color: var(--text-primary);
             font-weight: 300;
             letter-spacing: 0.25em;
@@ -184,15 +168,7 @@
             text-shadow: 0 0 30px rgba(0,0,0,0.8);
         }
 
-        .meta-info {
-            font-size: 11px;
-            color: var(--text-dim);
-            letter-spacing: 0.3em;
-            border-left: 1px solid #1a1a1a;
-            padding-left: 24px;
-        }
-
-        /* --- 核心交互：印章 --- */
+        /* 交互印章 */
         #author-seal {
             font-size: 14px;
             color: var(--accent);
@@ -204,21 +180,19 @@
             transition: all 0.8s var(--ease-cinematic);
             opacity: 0.8;
             position: relative;
-            /* 防止移动端点击高亮背景 */
-            -webkit-tap-highlight-color: transparent; 
         }
         
         #author-seal::after {
-            content: "没人想要 坏掉的小孩";
+            content: "没人想要 坏掉的小孩"; 
             position: absolute;
-            left: -80px;
+            left: -80px; 
             width: 200px;
             top: 50%;
             transform: translateY(-50%) rotate(90deg);
             font-size: 10px;
-            color: var(--text-dim);
+            color: #444;
             opacity: 0;
-            transition: opacity 1s ease;
+            transition: opacity 1s ease; 
             pointer-events: none;
             letter-spacing: 3px;
             white-space: nowrap;
@@ -230,17 +204,26 @@
         #author-seal.dead {
             border-color: var(--dead-grey);
             color: var(--dead-grey);
+            animation: none;
             transform: scale(0.95);
             box-shadow: none;
             pointer-events: none;
             filter: grayscale(100%);
         }
 
-        /* --- 场景：正文 --- */
+        .meta-info {
+            font-size: 11px;
+            color: var(--text-dim);
+            letter-spacing: 4px;
+            border-left: 1px solid #1a1a1a;
+            padding-left: 24px;
+        }
+
+        /* 正文区 */
         .container {
             max-width: 620px;
             margin: 0 auto;
-            padding: 15vh 24px 200px;
+            padding: 150px 24px 200px;
             opacity: 0;
             pointer-events: none;
             transition: opacity 2.5s ease-in;
@@ -273,7 +256,7 @@
         .diary-entry.visible { opacity: 1; transform: translateY(0); }
         .diary-date { color: var(--accent); margin-bottom: 8px; opacity: 0.8; letter-spacing: 1px; }
 
-        /* 文案排版 */
+        /* 文本排版 */
         .prompt-text {
             display: block;
             text-align: center;
@@ -290,7 +273,7 @@
             font-size: 16px;
             font-weight: 300;
         }
-        
+
         .highlight-text {
             color: var(--text-primary);
             border-left: 1px solid var(--accent);
@@ -299,19 +282,9 @@
             font-style: italic;
         }
 
-        /* --- 终章 --- */
-        .final-chapter {
-            text-align: center;
-            margin-top: 280px;
-            min-height: 50vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-
+        /* 终章 */
         .final-redemption {
-            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            font-size: 2.5rem;
             letter-spacing: 0.5em;
             color: var(--text-primary);
             opacity: 0; 
@@ -331,19 +304,7 @@
             transition: opacity 3s ease 1.5s;
         }
 
-        .final-chapter.visible .final-redemption { opacity: 0.8; }
-        .final-chapter.visible .final-whisper { opacity: 0.6; }
-
-        footer {
-            text-align: center;
-            font-size: 10px;
-            color: #222;
-            letter-spacing: 0.3em;
-            margin-top: 50px;
-            text-transform: uppercase;
-        }
-
-        /* --- 动画关键帧 --- */
+        /* 动画库 */
         @keyframes breathe {
             0%, 100% { opacity: 0.3; transform: scale(1); }
             50% { opacity: 0.8; transform: scale(1.2); }
@@ -356,6 +317,7 @@
         }
 
         @media (max-width: 600px) {
+            h1 { font-size: 2.6rem; }
             .container { padding: 80px 24px 150px; }
             .diary-entry { margin-right: 0; text-align: left; border-right: none; border-left: 1px solid #222; padding-left: 16px; }
         }
@@ -416,7 +378,7 @@
 
         <div class="diary-entry">
             <div class="diary-date">2019.03.15</div>
-            <div class="diary-text">停药的第三天。世界安静得像一部默片。我终于不用假装听得懂他们在笑什么了。</div>
+            <div class="diary-text">切断了所有联系。世界安静得像一部默片。我终于不用假装听得懂他们在笑什么了。</div>
         </div>
 
         <div class="content-block">
@@ -499,7 +461,6 @@
     </div>
 
     <script>
-        // DOM Elements
         const startScreen = document.getElementById('start-screen');
         const header = document.getElementById('main-header');
         const content = document.getElementById('content');
@@ -509,7 +470,7 @@
         const lifeLine = document.getElementById('life-line');
         const startDot = document.getElementById('start-dot');
 
-        // Logic: Intro Animation
+        // 开场文字逻辑
         window.addEventListener('load', () => {
             const p1 = document.getElementById('p1');
             const p2 = document.getElementById('p2');
@@ -525,7 +486,7 @@
             }, 6500);
         });
 
-        // Logic: Click to Enter
+        // 1. 点击进入
         startScreen.addEventListener('click', () => {
             bgm.volume = 0.6;
             bgm.play().catch(e => console.log("Audio autoplay prevented"));
@@ -537,12 +498,13 @@
             }, 2000);
         });
 
-        // Logic: Seal Interaction
+        // 2. 印章解封 (核心修改：2秒锁定)
         authorSeal.addEventListener('click', () => {
             if (authorSeal.classList.contains('dead')) return;
 
             authorSeal.classList.add('shaking');
-            
+            body.classList.add('scroll-locked'); // V21: 锁定滚动
+
             setTimeout(() => {
                 authorSeal.classList.remove('shaking');
                 authorSeal.classList.add('dead');
@@ -552,19 +514,22 @@
                 lifeLine.style.opacity = '1';
                 content.classList.add('revealed');
                 
+                // V21: 强制暂停 2 秒，让用户阅读第一段文案
                 setTimeout(() => {
+                    body.classList.remove('scroll-locked'); // 解锁滚动
                     document.body.style.overflow = 'auto';
                     window.scrollBy({ top: 100, behavior: 'smooth' });
-                }, 500);
+                }, 2000); 
+
             }, 500);
         });
 
-        // Logic: Tab Visibility
+        // 3. 标签页呼唤
         document.addEventListener('visibilitychange', function() {
             document.title = document.hidden ? "别走……" : "人生如此 | 谦总";
         });
 
-        // Logic: Scroll Observer
+        // 4. 滚动观察器
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -574,22 +539,24 @@
             });
         }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
 
-        document.querySelectorAll('.content-block, .diary-entry, .final-chapter').forEach((block) => {
+        document.querySelectorAll('.content-block, .diary-entry').forEach((block) => {
             observer.observe(block);
         });
 
-        // Logic: Scroll Progress (Throttled via requestAnimationFrame)
-        let ticking = false;
+        // 5. 顶部生命线进度
         window.addEventListener('scroll', () => {
-            if (!ticking && lifeLine.style.opacity === '1') {
-                window.requestAnimationFrame(() => {
-                    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-                    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-                    const scrolled = (winScroll / height) * 100;
-                    lifeLine.style.width = scrolled + "%";
-                    ticking = false;
-                });
-                ticking = true;
+            if(lifeLine.style.opacity === '1') {
+                let ticking = false;
+                if (!ticking) {
+                    window.requestAnimationFrame(() => {
+                        const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                        const scrolled = (winScroll / height) * 100;
+                        lifeLine.style.width = scrolled + "%";
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
             }
         });
     </script>
