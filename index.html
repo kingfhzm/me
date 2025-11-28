@@ -11,69 +11,30 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@200;300;400;500&display=swap" rel="stylesheet">
 
     <style>
-        :root { --bg:#000; --text:#f2f2f2; --dim:#888; --blood:#8a1c1c; --dead:#333; --font:"Noto Serif SC",serif; --ease:cubic-bezier(.22,1,.36,1); }
+        :root{--bg:#000;--text:#f2f2f2;--dim:#888;--blood:#8a1c1c;--dead:#333;--font:"Noto Serif SC",serif;--ease:cubic-bezier(.22,1,.36,1)}
         *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-        
-        /* 1. 隐藏默认光标 */
-        *{cursor:none!important}
-        
-        /* 2. 鼠标跟随点样式 */
-        body::after{
-            content:"";
-            position:fixed;
-            width:8px;
-            height:8px;
-            background:var(--blood);
-            border-radius:50%;
-            pointer-events:none;
-            z-index:99999;
-            left:0; /* 由JS控制位置 */
-            top:0;
-            opacity:0;
-            transition:opacity .3s, transform .05s linear; /* 优化跟随流畅度 */
-        }
-        
-        body.mouse-move::after{opacity:1}
-
-        body{
-            background:var(--bg);
-            color:var(--dim);
-            font-family:var(--font);
-            line-height:2.6;
-            font-size:16px;
-            font-weight:300;
-            min-height:100vh;
-            overflow:hidden;
-            transition:background .3s;
-            animation:dying-light 15s infinite linear;
-        }
-
-        /* 强制锁定滚动时的状态 */
-        body.scroll-locked {
-            overflow: hidden !important;
-        }
-
+        body{background:var(--bg);color:var(--dim);font-family:var(--font);line-height:2.6;font-size:16px;font-weight:300;min-height:100vh;overflow:hidden}
         ::selection{background:var(--blood);color:#fff}
-        
+
         .letterbox{position:fixed;left:0;width:100%;height:0;background:#000;z-index:800;transition:height 2.5s var(--ease);pointer-events:none}
         .letterbox.top{top:0}.letterbox.bottom{bottom:0}
-        body.cinema-mode .letterbox{height:10vh}
+        body.cinema .letterbox{height:10vh}
 
-        #life-line{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,#8a1c1c,#ff1e1e 70%,transparent);box-shadow:0 0 15px #8a1c1c,0 0 30px rgba(255,30,30,.3);width:0%;z-index:2000;opacity:0;animation:bleed 8s infinite ease-in-out}
+        #life-line{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,#8a1c1c,#ff1e1e 70%,transparent);box-shadow:0 0 15px #8a1c1c,0 0 30px rgba(255,30,30,.3);width:0%;z-index:2000;opacity:0;animation:bleed 8s infinite ease-in-out}
         @keyframes bleed{0%,100%{filter:brightness(1) hue-rotate(0deg)}50%{filter:brightness(1.4) hue-rotate(12deg)}}
 
         .grain{position:fixed;inset:0;pointer-events:none;z-index:50;opacity:.05;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 
         #start-screen{position:fixed;inset:0;background:#000;z-index:9999;display:flex;flex-direction:column;justify-content:center;align-items:center;cursor:pointer;transition:opacity 2s var(--ease)}
-        .dot{width:6px;height:6px;background:var(--blood);border-radius:50%;margin-bottom:40px;opacity:0;box-shadow:0 0 12px rgba(138,28,28,.6);animation:breathe 4s infinite ease-in-out}
+        .dot{width:6px;height:6px;background:var(--blood);border-radius:50%;margin-bottom:40px;opacity:0;box-shadow:0 0 15px rgba(138,28,28,.6);animation:breathe 4s infinite ease-in-out}
         .typing{font-size:14px;color:#666;letter-spacing:.4em;font-weight:300;overflow:hidden;white-space:nowrap;border-right:2px solid var(--blood);width:0}
         @keyframes breathe{0%,100%{opacity:.3;transform:scale(1)}50%{opacity:.9;transform:scale(1.3)}}
 
         header{height:100vh;display:flex;justify-content:center;align-items:center;opacity:0;transition:opacity 2.5s var(--ease)}
         .vertical-title-box{writing-mode:vertical-rl;text-orientation:mixed;display:flex;align-items:center;gap:40px;min-height:100vh}
         h1{font-size:3.2rem;color:var(--text);font-weight:300;letter-spacing:.25em}
-        #author-seal{font-size:1rem;color:var(--blood);letter-spacing:.4em;border:1px solid var(--blood);padding:18px 8px;cursor:pointer;transition:all .8s var(--ease);position:relative}
-        #author-seal::after{content:"没人想要 坏掉的小孩";position:absolute;left:-80px;top:50%;transform:translateY(-50%) rotate(90deg);font-size:10px;color:#444;letter-spacing:3px;opacity:0;transition:opacity 1s}
+        #author-seal{font-size:14px;color:var(--blood);letter-spacing:.4em;border:1px solid var(--blood);padding:18px 8px;cursor:pointer;transition:all .8s var(--ease);position:relative}
+        #author-seal::after{content:"没人想要 坏掉的小孩";position:absolute;left:-90px;top:50%;transform:translateY(-50%) rotate(90deg);font-size:10px;color:#444;letter-spacing:3px;opacity:0;transition:opacity 1s}
         #author-seal:hover::after{opacity:.8}
         #author-seal.dead{border-color:var(--dead);color:var(--dead);filter:grayscale(100%);pointer-events:none;transform:scale(.95)}
 
@@ -83,16 +44,18 @@
         .visible{opacity:1;transform:none;filter:none}
         .diary-entry{text-align:right;max-width:260px;margin:0 0 180px auto;border-right:1px solid #222;padding-right:16px;font-family:monospace;font-size:12px;color:#555}
         .diary-date{color:var(--blood);letter-spacing:1px;text-shadow:0 0 8px currentColor;animation:ecg 9s infinite linear}
-
-        /* 终章样式 */
-        .final-redemption{font-size:2.6rem;letter-spacing:.5em;color:var(--text);margin:80px 0 20px;text-shadow:0 0 20px rgba(255,255,255,0.1);opacity:0;transition:opacity 2s ease 0.5s}
-        .final-whisper{font-size:12px;color:var(--blood);letter-spacing:.3em;opacity:0;margin-top:50px;transition:opacity 2s ease 2.5s}
-        .final-chapter.visible .final-redemption{opacity:0.8}
-        .final-chapter.visible .final-whisper{opacity:0.6}
-
-        @keyframes dying-light{0%,100%{filter:brightness(1)}50%{filter:brightness(.95)}}
         @keyframes ecg{0%,92%,100%{opacity:.8}93%{opacity:1;text-shadow:0 0 18px #8a1c1c}94%{opacity:.3}}
-        @keyframes shake{10%,90%{transform:translate3d(-1px,0,0)}20%,80%{transform:translate3d(2px,0,0)}30%,50%,70%{transform:translate3d(-4px,0,0)}40%,60%{transform:translate3d(4px,0,0)}
+
+        .final-redemption{font-size:2.6rem;letter-spacing:.5em;color:transparent;background:linear-gradient(90deg,transparent 48%,#8a1c1c 48%,#8a1c1c 52%,transparent 52%);-webkit-background-clip:text;background-clip:text;animation:wound 7s ease-in-out forwards;margin:80px 0 20px}
+        @keyframes wound{0%{background-position:0 0}18%{background-position:300px 0}35%{background-position:300px 0}52%{background-position:0 0}100%{background:var(--text);color:var(--text)}}
+        .final-whisper{font-size:12px;color:var(--blood);letter-spacing:.3em;opacity:0;margin-top:50px;animation:fadeIn 3s ease 2s forwards}
+        @keyframes fadeIn{to{opacity:1}}
+        .secret{height:150vh;display:flex;align-items:end;justify-content:center;padding-bottom:100px;font-size:9px;color:#111;letter-spacing:8px}
+
+        @media(max-width:600px){
+            .vertical-title-box{writing-mode:horizontal-tb;flex-direction:column;gap:50px;padding-top:15vh}
+            h1{writing-mode:vertical-rl;font-size:2.8rem}
+            .diary-entry{text-align:left;border-right:none;border-left:1px solid #222;padding-left:16px;margin-right:0}
         }
     </style>
 </head>
@@ -105,7 +68,6 @@
 
     <audio id="bgm" loop preload="auto" playsinline>
         <source src="bgm.mp3" type="audio/mpeg">
-        您的浏览器不支持音频。
     </audio>
 
     <div id="start-screen">
@@ -122,7 +84,7 @@
     </header>
 
     <div class="container" id="content">
-
+        <!-- 你的全部正文保持不变 -->
         <div class="content-block">
             <span class="prompt-text">“现实会逼着你把监狱装修得更辉煌”</span>
             <p class="response-text">我不再修补这座牢笼了，也不再粉饰墙壁。</p>
@@ -130,12 +92,7 @@
             <p class="response-text">现在我坐在灰烬里。体面是给观众看的，荒芜才是我。</p>
             <p class="response-text highlight-text">这种日复一日的表演，我倦了。</p>
         </div>
-
-        <div class="diary-entry">
-            <div class="diary-date">2018.11.04</div>
-            <div class="diary-text">第一次意识到，路灯的光不仅刺眼，而且寒冷。</div>
-        </div>
-
+        <div class="diary-entry"><div class="diary-date">2018.11.04</div><div class="diary-text">第一次意识到，路灯的光不仅刺眼，而且寒冷。</div></div>
         <div class="content-block">
             <span class="prompt-text">“我将生命体征下调至 1%”</span>
             <p class="response-text">这不是待机，是<strong>强制冬眠</strong>。</p>
@@ -143,12 +100,7 @@
             <p class="response-text">在这个过载的世界里，<strong>麻木，是我唯一的绝缘体。</strong></p>
             <p class="response-text highlight-text">只有不再感知热度，才不会被烫伤。</p>
         </div>
-
-        <div class="diary-entry">
-            <div class="diary-date">2019.03.15</div>
-            <div class="diary-text">切断了所有联系。世界安静得像一部默片。我终于不用假装听得懂他们在笑什么了。</div>
-        </div>
-
+        <div class="diary-entry"><div class="diary-date">2019.03.15</div><div class="diary-text">切断了所有联系。世界安静得像一部默片。我终于不用假装听得懂他们在笑什么了。</div></div>
         <div class="content-block">
             <span class="prompt-text">“你的靠近，是一次未经计算的地质灾害”</span>
             <p class="response-text">我不怕冷。在绝对零度里，我是安全的。</p>
@@ -156,111 +108,72 @@
             <p class="response-text">冻僵的肢体在解冻时会有剧痛。<strong>我承受不起那种复苏的代价。</strong></p>
             <p class="response-text highlight-text">请允许我继续做一块冰。这是对他人的慈悲。</p>
         </div>
-
-        <div class="diary-entry">
-            <div class="diary-date">2020.05.20</div>
-            <div class="diary-text">凌晨三点。看着天花板一点点变白。这种清醒的煎熬，比噩梦更像惩罚。</div>
-        </div>
-
+        <div class="diary-entry"><div class="diary-date">2020.05.20</div><div class="diary-text">凌晨三点。看着天花板一点点变白。这种清醒的煎熬，比噩梦更像惩罚。</div></div>
         <div class="content-block">
             <span class="prompt-text">“爱不会让你有呼吸可言”</span>
             <p class="response-text">我曾经以为窒息是外界的挤压。</p>
             <p class="response-text">后来才发现，是我在这个稀薄的维度里，早已丧失了换气的能力。</p>
             <p class="response-text">每一次呼吸，都像是在吸入碎玻璃。</p>
         </div>
-
-        <div class="diary-entry">
-            <div class="diary-date">2021.06.12</div>
-            <div class="diary-text">那条狗死了。它走得很干脆。我看着它僵硬的身体，竟然产生了一种名为“羡慕”的情绪。</div>
-        </div>
-
+        <div class="diary-entry"><div class="diary-date">2021.06.12</div><div class="diary-text">那条狗死了。它走得很干脆。我看着它僵硬的身体，竟然产生了一种名为“羡慕”的情绪。</div></div>
         <div class="content-block">
             <span class="prompt-text">“我渴望被爱 拥抱 贪婪”</span>
             <p class="response-text">这种渴望如今变得像是一种陈旧的幻肢痛。</p>
             <p class="response-text">明知道那里什么都没有，神经末梢却还在疯狂地传递着瘙痒。</p>
             <p class="response-text highlight-text">我不再伸手了。我学会了对虚空保持沉默。</p>
         </div>
-
-        <div class="diary-entry">
-            <div class="diary-date">2022.09.15</div>
-            <div class="diary-text">医生问：“抛开一切责任，你自己还想存在吗？” 那个瞬间，我找不到任何理由点头。</div>
-        </div>
-
+        <div class="diary-entry"><div class="diary-date">2022.09.15</div><div class="diary-text">医生问：“抛开一切责任，你自己还想存在吗？” 那个瞬间，我找不到任何理由点头。</div></div>
         <div class="content-block">
             <span class="prompt-text">“反反复复揭开早已愈合的伤口”</span>
             <p class="response-text">我需要确定我还是物质的，而不是虚无的。</p>
             <p class="response-text">在这具逐渐麻木的躯壳里，痛感是我确认自己还存在的唯一方式。</p>
             <p class="response-text highlight-text">如果连痛都没了，我就真的消失了。</p>
         </div>
-
         <div class="content-block">
             <span class="prompt-text">“这是枷锁”</span>
             <p class="response-text">我亲手给自己打了个死结。</p>
             <p class="response-text">在这个失重的世界里，也许只有这个结，还能拽住我一点点。</p>
         </div>
-
-        <div class="diary-entry">
-            <div class="diary-date">2023.12.25</div>
-            <div class="diary-text">窗外灯火通明。我拉上了窗帘。剧终。</div>
-        </div>
+        <div class="diary-entry"><div class="diary-date">2023.12.25</div><div class="diary-text">窗外灯火通明。我拉上了窗帘。剧终。</div></div>
 
         <div class="content-block final-chapter">
-            <span class="prompt-text" style="color:var(--blood);">你值得吗</span>
-            <br><br>
+            <span class="prompt-text" style="color:var(--blood);">你值得吗</span><br><br>
             <p class="response-text">这个问题悬在半空，像一把迟迟不肯落下的闸刀。</p>
-            <p class="response-text">我审视过自己的一生，乏善可陈，满目疮痍。</p>
-            <br>
+            <p class="response-text">我审视过自己的一生，乏善可陈，满目疮痍。</p><br>
             <p class="response-text">我不需要审判。</p>
             <p class="response-text">我只是累了。</p>
             <p class="response-text">像是走了一条很远很远的路，鞋子磨穿了，脚也烂了，却发现尽头是一堵墙。</p>
-            <p class="response-text">我想坐下来。就在这里。</p>
-            <br>
+            <p class="response-text">我想坐下来。就在这里。</p><br>
             <p class="response-text">不走了。</p>
             <p class="response-text">天快黑了。</p>
-
             <div class="final-redemption">救赎。</div>
             <div class="final-whisper">我也期待我的救赎。</div>
         </div>
-
         <div class="secret">别走……再陪我一会儿</div>
-
-        <footer>
-            &copy; 谦总绝笔
-        </footer>
-
     </div>
 
+    <!-- 修复后的完整 script -->
     <script>
+        // 开场逐字打字
         const phrases = ["没人想要坏掉的小孩。", "但我修不好了。", "进来吧。"];
         let i = 0, j = 0;
-        const typingElement = document.getElementById("typing");
-
         function type() {
             if (i < phrases.length) {
                 if (j <= phrases[i].length) {
-                    if (typingElement) typingElement.textContent = phrases[i].slice(0, j++);
+                    document.getElementById("typing").textContent = phrases[i].slice(0, j++);
                     setTimeout(type, 80);
                 } else {
-                    setTimeout(() => { 
-                        if (typingElement) typingElement.textContent = ""; 
-                        j = 0; 
-                        i++; 
-                        type(); 
-                    }, 1600);
+                    setTimeout(() => { document.getElementById("typing").textContent = ""; j = 0; i++; type(); }, 1600);
                 }
-            } else {
-                // 启动后的最终状态
-                document.getElementById('start-dot').style.opacity = '1'; 
             }
         }
-
         window.onload = () => setTimeout(type, 800);
 
+        // 开场点击
         document.getElementById("start-screen").onclick = function() {
             const audio = document.getElementById("bgm");
             audio.volume = 0.38;
-            audio.play().catch(e => {
-                 // Fallback for audio policy block
+            audio.play().catch(() => {
                 const btn = document.createElement("div");
                 btn.innerText = "▶";
                 btn.style.cssText = "position:fixed;bottom:30px;right:30px;z-index:9999;color:#600;font-size:12px;cursor:pointer;opacity:0.3;";
@@ -271,77 +184,44 @@
             setTimeout(() => { this.remove(); document.getElementById("main-header").style.opacity = 1; }, 2000);
         };
 
-        document.getElementById("author-seal").onclick = function() {
+        // 印章点击（关键修复）
+        document.getElementById("author-seal").onclick = function(e) {
             if (this.classList.contains("dead")) return;
-
-            const content = document.getElementById("content");
-            const body = document.body;
-            const lifeLine = document.getElementById('life-line');
-            
-            // 1. 启动震颤和锁定
-            this.classList.add('shaking');
-            body.classList.add('scroll-locked');
-            
-            setTimeout(() => {
-                // 2. 状态切换
-                this.classList.remove('shaking');
-                this.classList.add('dead');
-                this.innerText = "绝笔"; 
-                
-                // 3. 视觉解锁
-                body.classList.add('cinema-mode'); 
-                lifeLine.style.opacity = '1';
-                content.classList.add('show');
-
-                // 4. 解锁滚动（强制阅读2秒）
-                setTimeout(() => {
-                    body.classList.remove('scroll-locked');
-                    document.documentElement.style.overflow = ''; // 允许滚动
-                    window.scrollBy({ top: 100, behavior: 'smooth' });
-                }, 2000); 
-
-            }, 500);
+            e.stopPropagation();
+            this.classList.add("dead");
+            this.innerText = "绝笔";
+            document.documentElement.style.overflow = "hidden";
+            document.body.classList.add("cinema");
+            document.getElementById("life-line").style.opacity = "1";
+            document.getElementById("content").classList.add("show");
+            setTimeout(() => document.documentElement.style.overflow = "", 2200);
         };
 
-        // 鼠标跟随逻辑
-        document.onmousemove = function(e) {
-            document.body.classList.add("mouse-move");
-            const after = document.body.style;
-            after.setProperty("--mx", (e.clientX - 4) + "px"); // Adjust for dot size
-            after.setProperty("--my", (e.clientY - 4) + "px");
-            // 优化：直接使用 CSS 变量来控制位置
-            document.body.style.setProperty("--mx", (e.clientX) + "px");
-            document.body.style.setProperty("--my", (e.clientY) + "px");
+        // 自定义红点指针（不阻挡点击）
+        const cursor = document.createElement("div");
+        cursor.style.cssText = "position:fixed;width:8px;height:8px;background:#8a1c1c;border-radius:50%;pointer-events:none;z-index:99999;box-shadow:0 0 12px currentColor;transform:translate(-50%,-50%);opacity:0;transition:opacity .3s";
+        document.body.appendChild(cursor);
+        document.onmousemove = e => {
+            cursor.style.left = e.clientX + "px";
+            cursor.style.top = e.clientY + "px";
+            cursor.style.opacity = "1";
+        };
+
+        // 滚动显示动画
+        const obs = new IntersectionObserver(es => es.forEach(e => {
+            if (e.isIntersecting) { e.target.classList.add("visible"); obs.unobserve(e.target); }
+        }), {threshold:0.15});
+        document.querySelectorAll(".content-block, .diary-entry").forEach(el => obs.observe(el));
+
+        // 生命线进度
+        window.onscroll = () => {
+            const scrolled = (window.scrollY / (document.body.scrollHeight - innerHeight)) * 100;
+            document.getElementById("life-line").style.width = scrolled + "%";
         };
 
         // 标签页呼唤
-        document.addEventListener('visibilitychange', function() {
+        document.addEventListener("visibilitychange", () => {
             document.title = document.hidden ? "别走……" : "人生如此 | 谦总";
-        });
-
-        // 滚动观察器
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting){ entry.target.classList.add('visible'); observer.unobserve(entry.target); }
-            });
-        }, { threshold: 0.1 });
-        document.querySelectorAll('.content-block, .diary-entry').forEach(block => observer.observe(block));
-
-        // 顶部生命线进度
-        window.addEventListener('scroll', () => {
-            if(lifeLine.style.opacity === '1') {
-                let ticking = false;
-                if (!ticking) {
-                    window.requestAnimationFrame(() => {
-                        const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-                        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-                        const scrolled = (winScroll / height) * 100;
-                        lifeLine.style.width = scrolled + "%";
-                        ticking = false;
-                    });
-                    ticking = true;
-                }
-            }
         });
     </script>
 </body>
