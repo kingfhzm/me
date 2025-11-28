@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#000000">
+    <meta name="description" content="绝笔。">
     <title>人生如此 | 谦总</title>
     
     <meta name="robots" content="noindex, nofollow">
@@ -15,32 +17,50 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@200;300;400;500&display=swap" rel="stylesheet">
 
     <style>
+        /* --- 全局变量系统 --- */
         :root {
-            --bg-color: #000000;       
-            --text-primary: #f2f2f2;   
-            --text-secondary: #888888; 
-            --accent: #8a1c1c;         
+            /* 调色板 */
+            --bg-color: #000000;
+            --text-primary: #f2f2f2;
+            --text-secondary: #888888;
+            --text-dim: #444444;
+            --accent: #8a1c1c; /* 凝固血色 */
+            
+            /* 字体 */
             --font-main: "Noto Serif SC", "Songti SC", serif;
+            
+            /* 动效曲线 */
             --ease-cinematic: cubic-bezier(0.22, 1, 0.36, 1);
+            --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
+        /* --- 基础重置 --- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
+        
         ::selection { background: var(--accent); color: #fff; }
+
+        html {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            scroll-behavior: smooth;
+        }
 
         body {
             background-color: var(--bg-color);
             color: var(--text-secondary);
             font-family: var(--font-main);
             line-height: 2.6;
-            font-size: 16px;
+            /* 流体字体：在不同屏幕下自动缩放 */
+            font-size: clamp(14px, 2vw, 16px);
             font-weight: 300;
             min-height: 100vh;
-            overflow: hidden;
+            overflow: hidden; /* 初始锁屏 */
             transition: background-color 3s ease;
         }
 
-        /* 电影遮幅 */
+        /* --- 视觉层级组件 --- */
+
+        /* 1. 电影遮幅 */
         .letterbox {
             position: fixed;
             left: 0;
@@ -50,11 +70,13 @@
             z-index: 800;
             transition: height 2.5s var(--ease-cinematic);
             pointer-events: none;
+            will-change: height;
         }
         .letterbox.top { top: 0; }
         .letterbox.bottom { bottom: 0; }
         body.cinema-mode .letterbox { height: 10vh; }
 
+        /* 2. 生命线 (进度条) */
         #life-line {
             position: fixed;
             top: 0;
@@ -66,8 +88,10 @@
             box-shadow: 0 0 10px var(--accent);
             transition: width 0.1s linear;
             opacity: 0;
+            will-change: width;
         }
 
+        /* 3. 胶片噪点 */
         .grain-overlay {
             position: fixed;
             top: 0;
@@ -80,7 +104,7 @@
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
 
-        /* --- 开场 --- */
+        /* --- 场景：开场遮罩 --- */
         #start-screen {
             position: fixed;
             top: 0;
@@ -109,7 +133,7 @@
         .intro-phrase {
             position: absolute;
             font-size: 13px;
-            color: #666;
+            color: var(--text-secondary);
             letter-spacing: 0.3em;
             opacity: 0;
             font-weight: 300;
@@ -117,7 +141,6 @@
             transform: translateY(10px);
             white-space: nowrap;
         }
-
         .intro-phrase.active { opacity: 1; transform: translateY(0); }
 
         .breathing-point {
@@ -132,7 +155,7 @@
             box-shadow: 0 0 15px rgba(138, 28, 28, 0.5);
         }
 
-        /* --- 封面 --- */
+        /* --- 场景：封面 --- */
         header {
             height: 100vh;
             width: 100%;
@@ -141,6 +164,7 @@
             align-items: center;
             opacity: 0;
             transition: opacity 2.5s var(--ease-cinematic);
+            will-change: opacity;
         }
 
         .vertical-title-box {
@@ -148,11 +172,11 @@
             text-orientation: mixed;
             display: flex;
             align-items: center;
-            gap: 32px;
+            gap: clamp(20px, 5vh, 40px); /* 响应式间距 */
         }
 
         h1 {
-            font-size: 3.2rem;
+            font-size: clamp(2.5rem, 5vw, 3.5rem); /* 响应式大标题 */
             color: var(--text-primary);
             font-weight: 300;
             letter-spacing: 0.25em;
@@ -160,7 +184,15 @@
             text-shadow: 0 0 30px rgba(0,0,0,0.8);
         }
 
-        /* --- 印章交互 (核心修改) --- */
+        .meta-info {
+            font-size: 11px;
+            color: var(--text-dim);
+            letter-spacing: 0.3em;
+            border-left: 1px solid #1a1a1a;
+            padding-left: 24px;
+        }
+
+        /* --- 核心交互：印章 --- */
         #author-seal {
             font-size: 14px;
             color: var(--accent);
@@ -172,20 +204,21 @@
             transition: all 0.8s var(--ease-cinematic);
             opacity: 0.8;
             position: relative;
+            /* 防止移动端点击高亮背景 */
+            -webkit-tap-highlight-color: transparent; 
         }
         
-        /* 修改点：印章侧边文案 */
         #author-seal::after {
-            content: "没人想要 坏掉的小孩"; /* 凄美自白 */
+            content: "没人想要 坏掉的小孩";
             position: absolute;
-            left: -80px;  /* 调整位置以容纳长句 */
-            width: 200px; /* 增加宽度 */
+            left: -80px;
+            width: 200px;
             top: 50%;
             transform: translateY(-50%) rotate(90deg);
             font-size: 10px;
-            color: #444;
+            color: var(--text-dim);
             opacity: 0;
-            transition: opacity 1s ease; /* 浮现得更慢 */
+            transition: opacity 1s ease;
             pointer-events: none;
             letter-spacing: 3px;
             white-space: nowrap;
@@ -195,27 +228,19 @@
         #author-seal:hover::after { opacity: 0.8; }
 
         #author-seal.dead {
-            border-color: #333;
-            color: #333;
+            border-color: var(--dead-grey);
+            color: var(--dead-grey);
             transform: scale(0.95);
             box-shadow: none;
             pointer-events: none;
             filter: grayscale(100%);
         }
 
-        .meta-info {
-            font-size: 11px;
-            color: #444;
-            letter-spacing: 0.3em;
-            border-left: 1px solid #1a1a1a;
-            padding-left: 24px;
-        }
-
-        /* --- 正文 --- */
+        /* --- 场景：正文 --- */
         .container {
             max-width: 620px;
             margin: 0 auto;
-            padding: 150px 24px 200px;
+            padding: 15vh 24px 200px;
             opacity: 0;
             pointer-events: none;
             transition: opacity 2.5s ease-in;
@@ -228,6 +253,7 @@
             transform: translateY(30px);
             filter: blur(12px);
             transition: all 2s var(--ease-cinematic);
+            will-change: opacity, transform, filter;
         }
         .content-block.visible { opacity: 1; transform: translateY(0); filter: blur(0); }
 
@@ -247,11 +273,12 @@
         .diary-entry.visible { opacity: 1; transform: translateY(0); }
         .diary-date { color: var(--accent); margin-bottom: 8px; opacity: 0.8; letter-spacing: 1px; }
 
+        /* 文案排版 */
         .prompt-text {
             display: block;
             text-align: center;
             font-size: 13px;
-            color: #444;
+            color: var(--text-dim);
             margin-bottom: 50px;
             letter-spacing: 0.15em;
         }
@@ -263,7 +290,7 @@
             font-size: 16px;
             font-weight: 300;
         }
-
+        
         .highlight-text {
             color: var(--text-primary);
             border-left: 1px solid var(--accent);
@@ -272,30 +299,28 @@
             font-style: italic;
         }
 
-        /* --- 终章：救赎排版 --- */
+        /* --- 终章 --- */
         .final-chapter {
             text-align: center;
             margin-top: 280px;
-            min-height: 60vh; /* 留出足够的空间 */
+            min-height: 50vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
         }
 
-        /* 大字的“救赎” */
         .final-redemption {
-            font-size: 2.5rem;
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
             letter-spacing: 0.5em;
             color: var(--text-primary);
-            opacity: 0; /* 初始隐藏，用JS控制显示 */
-            margin-top: 100px;
+            opacity: 0; 
+            margin-top: 50px;
             font-weight: 300;
             text-shadow: 0 0 20px rgba(255,255,255,0.1);
             transition: opacity 3s ease;
         }
         
-        /* 你的期待 */
         .final-whisper {
             font-size: 12px;
             color: var(--accent);
@@ -303,7 +328,7 @@
             margin-top: 40px;
             opacity: 0;
             font-weight: 300;
-            transition: opacity 3s ease 1.5s; /* 延迟 1.5s 显示 */
+            transition: opacity 3s ease 1.5s;
         }
 
         .final-chapter.visible .final-redemption { opacity: 0.8; }
@@ -318,6 +343,7 @@
             text-transform: uppercase;
         }
 
+        /* --- 动画关键帧 --- */
         @keyframes breathe {
             0%, 100% { opacity: 0.3; transform: scale(1); }
             50% { opacity: 0.8; transform: scale(1.2); }
@@ -330,10 +356,8 @@
         }
 
         @media (max-width: 600px) {
-            h1 { font-size: 2.6rem; }
             .container { padding: 80px 24px 150px; }
             .diary-entry { margin-right: 0; text-align: left; border-right: none; border-left: 1px solid #222; padding-left: 16px; }
-            .final-redemption { font-size: 1.8rem; letter-spacing: 0.3em; }
         }
     </style>
 </head>
@@ -341,6 +365,7 @@
 
     <div class="letterbox top"></div>
     <div class="letterbox bottom"></div>
+
     <div id="life-line"></div>
 
     <audio id="bgm" loop preload="auto">
@@ -474,6 +499,7 @@
     </div>
 
     <script>
+        // DOM Elements
         const startScreen = document.getElementById('start-screen');
         const header = document.getElementById('main-header');
         const content = document.getElementById('content');
@@ -483,6 +509,7 @@
         const lifeLine = document.getElementById('life-line');
         const startDot = document.getElementById('start-dot');
 
+        // Logic: Intro Animation
         window.addEventListener('load', () => {
             const p1 = document.getElementById('p1');
             const p2 = document.getElementById('p2');
@@ -498,9 +525,11 @@
             }, 6500);
         });
 
+        // Logic: Click to Enter
         startScreen.addEventListener('click', () => {
             bgm.volume = 0.6;
-            bgm.play().catch(e => console.log(e));
+            bgm.play().catch(e => console.log("Audio autoplay prevented"));
+            
             startScreen.style.opacity = '0';
             setTimeout(() => {
                 startScreen.style.display = 'none';
@@ -508,15 +537,18 @@
             }, 2000);
         });
 
+        // Logic: Seal Interaction
         authorSeal.addEventListener('click', () => {
             if (authorSeal.classList.contains('dead')) return;
+
             authorSeal.classList.add('shaking');
             
             setTimeout(() => {
                 authorSeal.classList.remove('shaking');
                 authorSeal.classList.add('dead');
                 authorSeal.innerText = "绝笔"; 
-                body.classList.add('cinema-mode'); // 开启遮幅
+                
+                body.classList.add('cinema-mode'); 
                 lifeLine.style.opacity = '1';
                 content.classList.add('revealed');
                 
@@ -527,14 +559,12 @@
             }, 500);
         });
 
+        // Logic: Tab Visibility
         document.addEventListener('visibilitychange', function() {
-            if (document.hidden) {
-                document.title = "别走……";
-            } else {
-                document.title = "人生如此 | 谦总";
-            }
+            document.title = document.hidden ? "别走……" : "人生如此 | 谦总";
         });
 
+        // Logic: Scroll Observer
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -544,16 +574,22 @@
             });
         }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
 
-        document.querySelectorAll('.content-block, .diary-entry').forEach((block) => {
+        document.querySelectorAll('.content-block, .diary-entry, .final-chapter').forEach((block) => {
             observer.observe(block);
         });
 
+        // Logic: Scroll Progress (Throttled via requestAnimationFrame)
+        let ticking = false;
         window.addEventListener('scroll', () => {
-            if(lifeLine.style.opacity === '1') {
-                const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-                const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-                const scrolled = (winScroll / height) * 100;
-                lifeLine.style.width = scrolled + "%";
+            if (!ticking && lifeLine.style.opacity === '1') {
+                window.requestAnimationFrame(() => {
+                    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                    const scrolled = (winScroll / height) * 100;
+                    lifeLine.style.width = scrolled + "%";
+                    ticking = false;
+                });
+                ticking = true;
             }
         });
     </script>
