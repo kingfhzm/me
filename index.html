@@ -3,17 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#000000">
-    <meta name="description" content="绝笔。">
     <title>人生如此 | 谦总</title>
-<script defer src='https://static.cloudflareinsights.com/beacon.min.js' 
-        data-cf-beacon='{"token": "你的唯一标识符"}'></script>
-</head>
-<body>
+    
     <meta name="robots" content="noindex, nofollow">
     <meta name="googlebot" content="noindex">
-
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%23000000%22/><circle cx=%2250%22 cy=%2250%22 r=%2230%22 fill=%22%237d1a1a%22/></svg>">
+    
+    <meta name="description" content="非官方档案。请勿公开。">
+    <meta property="og:title" content="人生如此 | 绝笔">
+    <meta property="og:description" content="我把笑容刷了一层又一层。">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%23000000%22/><circle cx=%2250%22 cy=%2250%22 r=%2230%22 fill=%22%238a1c1c%22/></svg>">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,343 +20,72 @@
     <style>
         /* --- 全局变量系统 --- */
         :root {
-            /* 调色板 */
-            --bg-color: #000000;
-            --text-primary: #f2f2f2;
-            --text-secondary: #888888;
-            --text-dim: #444444;
-            --accent: #8a1c1c; /* 凝固血色 */
-            
-            /* 字体 */
-            --font-main: "Noto Serif SC", "Songti SC", serif;
-            
-            /* 动效曲线 */
-            --ease-cinematic: cubic-bezier(0.22, 1, 0.36, 1);
-            --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --bg:#000; --text:#f2f2f2; --dim:#888; --blood:#8a1c1c; --dead:#333; --font:"Noto Serif SC",serif; --ease:cubic-bezier(.22,1,.36,1);
         }
 
-        /* --- 基础重置 --- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
-        ::selection { background: var(--accent); color: #fff; }
-
-        html {
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            scroll-behavior: smooth;
-        }
+        ::selection { background: var(--blood); color: #fff; }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-secondary);
-            font-family: var(--font-main);
+            background-color: var(--bg);
+            color: var(--dim);
+            font-family: var(--font);
             line-height: 2.6;
-            /* 流体字体：在不同屏幕下自动缩放 */
-            font-size: clamp(14px, 2vw, 16px);
-            font-weight: 300;
-            min-height: 100vh;
-            overflow: hidden; /* 初始锁屏 */
-            transition: background-color 3s ease;
-        }
-
-        /* --- 视觉层级组件 --- */
-
-        /* 1. 电影遮幅 */
-        .letterbox {
-            position: fixed;
-            left: 0;
-            width: 100%;
-            height: 0;
-            background-color: #000;
-            z-index: 800;
-            transition: height 2.5s var(--ease-cinematic);
-            pointer-events: none;
-            will-change: height;
-        }
-        .letterbox.top { top: 0; }
-        .letterbox.bottom { bottom: 0; }
-        body.cinema-mode .letterbox { height: 10vh; }
-
-        /* 2. 生命线 (进度条) */
-        #life-line {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 2px;
-            background: var(--accent);
-            width: 0%;
-            z-index: 2000;
-            box-shadow: 0 0 10px var(--accent);
-            transition: width 0.1s linear;
-            opacity: 0;
-            will-change: width;
-        }
-
-        /* 3. 胶片噪点 */
-        .grain-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 50;
-            opacity: 0.04;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-        }
-
-        /* --- 场景：开场遮罩 --- */
-        #start-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #000;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            transition: opacity 2s var(--ease-cinematic);
-            cursor: pointer;
-        }
-
-        #intro-text-container {
-            height: 30px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 20px;
-            position: relative;
-        }
-
-        .intro-phrase {
-            position: absolute;
-            font-size: 13px;
-            color: var(--text-secondary);
-            letter-spacing: 0.3em;
-            opacity: 0;
-            font-weight: 300;
-            transition: opacity 1.5s ease, transform 1.5s ease;
-            transform: translateY(10px);
-            white-space: nowrap;
-        }
-        .intro-phrase.active { opacity: 1; transform: translateY(0); }
-
-        .breathing-point {
-            width: 6px;
-            height: 6px;
-            background-color: var(--accent);
-            border-radius: 50%;
-            opacity: 0;
-            animation: breathe 4s infinite ease-in-out;
-            margin-bottom: 30px;
-            transition: opacity 1s;
-            box-shadow: 0 0 15px rgba(138, 28, 28, 0.5);
-        }
-
-        /* --- 场景：封面 --- */
-        header {
-            height: 100vh;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            transition: opacity 2.5s var(--ease-cinematic);
-            will-change: opacity;
-        }
-
-        .vertical-title-box {
-            writing-mode: vertical-rl;
-            text-orientation: mixed;
-            display: flex;
-            align-items: center;
-            gap: clamp(20px, 5vh, 40px); /* 响应式间距 */
-        }
-
-        h1 {
-            font-size: clamp(2.5rem, 5vw, 3.5rem); /* 响应式大标题 */
-            color: var(--text-primary);
-            font-weight: 300;
-            letter-spacing: 0.25em;
-            margin: 0;
-            text-shadow: 0 0 30px rgba(0,0,0,0.8);
-        }
-
-        .meta-info {
-            font-size: 11px;
-            color: var(--text-dim);
-            letter-spacing: 0.3em;
-            border-left: 1px solid #1a1a1a;
-            padding-left: 24px;
-        }
-
-        /* --- 核心交互：印章 --- */
-        #author-seal {
-            font-size: 14px;
-            color: var(--accent);
-            letter-spacing: 0.4em;
-            font-weight: 500;
-            border: 1px solid var(--accent);
-            padding: 18px 7px;
-            cursor: pointer;
-            transition: all 0.8s var(--ease-cinematic);
-            opacity: 0.8;
-            position: relative;
-            /* 防止移动端点击高亮背景 */
-            -webkit-tap-highlight-color: transparent; 
-        }
-        
-        #author-seal::after {
-            content: "没人想要 坏掉的小孩";
-            position: absolute;
-            left: -80px;
-            width: 200px;
-            top: 50%;
-            transform: translateY(-50%) rotate(90deg);
-            font-size: 10px;
-            color: var(--text-dim);
-            opacity: 0;
-            transition: opacity 1s ease;
-            pointer-events: none;
-            letter-spacing: 3px;
-            white-space: nowrap;
-            font-weight: 300;
-        }
-        #author-seal:hover { opacity: 1; box-shadow: 0 0 25px rgba(138, 28, 28, 0.15); }
-        #author-seal:hover::after { opacity: 0.8; }
-
-        #author-seal.dead {
-            border-color: var(--dead-grey);
-            color: var(--dead-grey);
-            transform: scale(0.95);
-            box-shadow: none;
-            pointer-events: none;
-            filter: grayscale(100%);
-        }
-
-        /* --- 场景：正文 --- */
-        .container {
-            max-width: 620px;
-            margin: 0 auto;
-            padding: 15vh 24px 200px;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 2.5s ease-in;
-        }
-        .container.revealed { opacity: 1; pointer-events: auto; }
-
-        .content-block {
-            margin-bottom: 180px;
-            opacity: 0;
-            transform: translateY(30px);
-            filter: blur(12px);
-            transition: all 2s var(--ease-cinematic);
-            will-change: opacity, transform, filter;
-        }
-        .content-block.visible { opacity: 1; transform: translateY(0); filter: blur(0); }
-
-        .diary-entry {
-            text-align: right;
-            margin: 0 0 180px auto; 
-            max-width: 260px;
-            opacity: 0; 
-            border-right: 1px solid #222;
-            padding-right: 16px;
-            font-size: 12px;
-            color: #555;
-            font-family: monospace;
-            transform: translateY(20px);
-            transition: all 2s var(--ease-cinematic);
-        }
-        .diary-entry.visible { opacity: 1; transform: translateY(0); }
-        .diary-date { color: var(--accent); margin-bottom: 8px; opacity: 0.8; letter-spacing: 1px; }
-
-        /* 文案排版 */
-        .prompt-text {
-            display: block;
-            text-align: center;
-            font-size: 13px;
-            color: var(--text-dim);
-            margin-bottom: 50px;
-            letter-spacing: 0.15em;
-        }
-
-        .response-text {
-            color: var(--text-secondary);
-            margin-bottom: 28px;
-            text-align: justify;
             font-size: 16px;
             font-weight: 300;
+            min-height: 100vh;
+            overflow: hidden; 
+            transition: background-color 3s ease;
+            animation: dying-light 15s infinite linear;
         }
+
+        body.scroll-locked { overflow: hidden !important; }
+
+        .letterbox{position:fixed;left:0;width:100%;height:0;background:#000;z-index:800;transition:height 2.5s var(--ease);pointer-events:none}
+        .letterbox.top{top:0}.letterbox.bottom{bottom:0}
+        body.cinema-mode .letterbox{height:10vh}
+
+        #life-line{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,#8a1c1c,#ff1e1e 70%,transparent);box-shadow:0 0 15px #8a1c1c,0 0 30px rgba(255,30,30,.3);width:0%;z-index:2000;opacity:0;animation:bleed 8s infinite ease-in-out}
+
+        .grain{position:fixed;inset:0;pointer-events:none;z-index:50;opacity:.05;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+        #start-screen{position:fixed;inset:0;background:#000;z-index:9999;display:flex;flex-direction:column;justify-content:center;align-items:center;cursor:pointer;transition:opacity 2s var(--ease)}
+        .dot{width:6px;height:6px;background:var(--blood);border-radius:50%;margin-bottom:40px;opacity:0;box-shadow:0 0 12px rgba(138,28,28,.6);animation:breathe 4s infinite ease-in-out}
+        .typing{font-size:14px;color:#666;letter-spacing:.4em;font-weight:300;overflow:hidden;white-space:nowrap;border-right:2px solid var(--blood);width:0}
+
+        header{height:100vh;display:flex;justify-content:center;align-items:center;opacity:0;transition:opacity 2.5s var(--ease)}
+        .vertical-title-box{writing-mode:vertical-rl;text-orientation:mixed;display:flex;align-items:center;gap:40px;min-height:100vh}
+        h1{font-size:3.2rem;color:var(--text);font-weight:300;letter-spacing:.25em}
+        #author-seal{font-size:1rem;color:var(--blood);letter-spacing:.4em;border:1px solid var(--blood);padding:18px 8px;cursor:pointer;transition:all .8s var(--ease);position:relative}
+        #author-seal::after{content:"没人想要 坏掉的小孩";position:absolute;left:-80px;top:50%;transform:translateY(-50%) rotate(90deg);font-size:10px;color:#444;letter-spacing:3px;opacity:0;transition:opacity 1s}
+        #author-seal:hover::after{opacity:.8}
+        #author-seal.dead{border-color:var(--dead);color:var(--dead);filter:grayscale(100%);pointer-events:none;transform:scale(.95)}
+
+        .meta-info{font-size:0.8rem;color:#555;letter-spacing:4px;border-left:1px solid #1a1a1a;padding-left:20px}
+
+        .container{max-width:620px;margin:0 auto;padding:150px 24px 300px;opacity:0;pointer-events:none;transition:opacity 2.5s ease-in}
+        .container.show{opacity:1;pointer-events:auto}
+        .content-block,.diary-entry{opacity:0;transform:translateY(30px);filter:blur(12px);transition:all 2s var(--ease)}
+        .visible{opacity:1;transform:none;filter:none}
+        .diary-entry{text-align:right;max-width:260px;margin:0 0 180px auto;border-right:1px solid #222;padding-right:16px;font-family:monospace;font-size:12px;color:#555}
+
+        .prompt-text{display:block;text-align:center;font-size:0.9rem;color:#444;margin-bottom:50px;letter-spacing:4px;font-style:italic}
+        .response-text{color:var(--dim);margin-bottom:28px;text-align:justify;font-size:16px;font-weight:300}
+        .highlight-text{color:var(--text);border-left:1px solid var(--blood);padding-left:20px;margin-top:40px;font-style:italic}
+
+        .final-redemption{font-size:2.6rem;letter-spacing:.5em;color:var(--text);margin:80px 0 20px;text-shadow:0 0 20px rgba(255,255,255,0.1);opacity:0;transition:opacity 3s ease 0.5s}
+        .final-whisper{font-size:12px;color:var(--blood);letter-spacing:.3em;opacity:0;margin-top:50px;transition:opacity 3s ease 2.5s}
+
+        footer{text-align:center;font-size:10px;color:#222;letter-spacing:2px;margin-top:100px}
+
+        /* 动画库 */
+        @keyframes breathe{0%,100%{opacity:.3;transform:scale(1)}50%{opacity:.9;transform:scale(1.3)}}
+        @keyframes shake{10%,90%{transform:translate3d(-1px,0,0)}20%,80%{transform:translate3d(2px,0,0)}30%,50%,70%{-webkit-transform:translate3d(-4px,0,0);transform:translate3d(-4px,0,0)}40%,60%{-webkit-transform:translate3d(4px,0,0);transform:translate3d(4px,0,0)}}
+        @keyframes dying-light{0%,100%{filter:brightness(1)}50%{filter:brightness(.95)}}
         
-        .highlight-text {
-            color: var(--text-primary);
-            border-left: 1px solid var(--accent);
-            padding-left: 20px;
-            margin-top: 40px;
-            font-style: italic;
-        }
-
-        /* --- 终章 --- */
-        .final-chapter {
-            text-align: center;
-            margin-top: 280px;
-            min-height: 50vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .final-redemption {
-            font-size: clamp(1.8rem, 4vw, 2.5rem);
-            letter-spacing: 0.5em;
-            color: var(--text-primary);
-            opacity: 0; 
-            margin-top: 50px;
-            font-weight: 300;
-            text-shadow: 0 0 20px rgba(255,255,255,0.1);
-            transition: opacity 3s ease;
-        }
-        
-        .final-whisper {
-            font-size: 12px;
-            color: var(--accent);
-            letter-spacing: 0.3em;
-            margin-top: 40px;
-            opacity: 0;
-            font-weight: 300;
-            transition: opacity 3s ease 1.5s;
-        }
-
-        .final-chapter.visible .final-redemption { opacity: 0.8; }
-        .final-chapter.visible .final-whisper { opacity: 0.6; }
-
-        footer {
-            text-align: center;
-            font-size: 10px;
-            color: #222;
-            letter-spacing: 0.3em;
-            margin-top: 50px;
-            text-transform: uppercase;
-        }
-
-        /* --- 动画关键帧 --- */
-        @keyframes breathe {
-            0%, 100% { opacity: 0.3; transform: scale(1); }
-            50% { opacity: 0.8; transform: scale(1.2); }
-        }
-        @keyframes shake {
-            10%, 90% { transform: translate3d(-1px, 0, 0); }
-            20%, 80% { transform: translate3d(1px, 0, 0); }
-            30%, 50%, 70% { transform: translate3d(-2px, 0, 0); }
-            40%, 60% { transform: translate3d(2px, 0, 0); }
-        }
-
         @media (max-width: 600px) {
+            h1 { font-size: 2.6rem; }
             .container { padding: 80px 24px 150px; }
             .diary-entry { margin-right: 0; text-align: left; border-right: none; border-left: 1px solid #222; padding-left: 16px; }
         }
@@ -368,22 +95,17 @@
 
     <div class="letterbox top"></div>
     <div class="letterbox bottom"></div>
-
     <div id="life-line"></div>
+    <div class="grain"></div>
 
     <audio id="bgm" loop preload="auto">
-        <source src="bgm.mp3" type="audio/mp3">
+        <source src="bgm.mp3" type="audio/mpeg">
+        您的浏览器不支持音频。
     </audio>
 
-    <div class="grain-overlay"></div>
-
     <div id="start-screen">
-        <div class="breathing-point" id="start-dot"></div>
-        <div id="intro-text-container">
-            <span class="intro-phrase" id="p1">没人想要坏掉的小孩。</span>
-            <span class="intro-phrase" id="p2">但我修不好了。</span>
-            <span class="intro-phrase" id="p3">进来吧。</span>
-        </div>
+        <div class="dot"></div>
+        <div class="typing" id="typing"></div>
     </div>
 
     <header id="main-header">
@@ -395,7 +117,7 @@
     </header>
 
     <div class="container" id="content">
-        
+
         <div class="content-block">
             <span class="prompt-text">“现实会逼着你把监狱装修得更辉煌”</span>
             <p class="response-text">我不再修补这座牢笼了，也不再粉饰墙壁。</p>
@@ -419,7 +141,7 @@
 
         <div class="diary-entry">
             <div class="diary-date">2019.03.15</div>
-            <div class="diary-text">停药的第三天。世界安静得像一部默片。我终于不用假装听得懂他们在笑什么了。</div>
+            <div class="diary-text">切断了所有联系。世界安静得像一部默片。我终于不用假装听得懂他们在笑什么了。</div>
         </div>
 
         <div class="content-block">
@@ -458,7 +180,7 @@
             <div class="diary-date">2022.09.15</div>
             <div class="diary-text">医生问：“抛开一切责任，你自己还想存在吗？” 那个瞬间，我找不到任何理由点头。</div>
         </div>
-        
+
         <div class="content-block">
             <span class="prompt-text">“反反复复揭开早已愈合的伤口”</span>
             <p class="response-text">我需要确定我还是物质的，而不是虚无的。</p>
@@ -471,15 +193,15 @@
             <p class="response-text">我亲手给自己打了个死结。</p>
             <p class="response-text">在这个失重的世界里，也许只有这个结，还能拽住我一点点。</p>
         </div>
-        
+
         <div class="diary-entry">
             <div class="diary-date">2023.12.25</div>
             <div class="diary-text">窗外灯火通明。我拉上了窗帘。剧终。</div>
         </div>
 
         <div class="content-block final-chapter">
-            <span class="prompt-text" style="color: var(--accent);">你值得吗</span>
-            <br>
+            <span class="prompt-text" style="color:var(--blood);">你值得吗</span>
+            <br><br>
             <p class="response-text">这个问题悬在半空，像一把迟迟不肯落下的闸刀。</p>
             <p class="response-text">我审视过自己的一生，乏善可陈，满目疮痍。</p>
             <br>
@@ -495,57 +217,66 @@
             <div class="final-whisper">我也期待我的救赎。</div>
         </div>
 
+        <div class="secret">别走……再陪我一会儿</div>
+
         <footer>
-            &copy; 谦总绝笔
+            &copy; 2023 谦总 · 绝笔
         </footer>
 
     </div>
 
     <script>
-        // DOM Elements
-        const startScreen = document.getElementById('start-screen');
-        const header = document.getElementById('main-header');
+        const phrases = ["没人想要坏掉的小孩。", "但我修不好了。", "进来吧。"];
+        let i = 0, j = 0;
+        const typingElement = document.getElementById("typing");
+        const authorSeal = document.getElementById('author-seal');
         const content = document.getElementById('content');
         const bgm = document.getElementById('bgm');
-        const authorSeal = document.getElementById('author-seal');
         const body = document.body;
         const lifeLine = document.getElementById('life-line');
-        const startDot = document.getElementById('start-dot');
+        const startScreen = document.getElementById('start-screen');
+        
+        // 打字机效果函数
+        function type() {
+            if (i < phrases.length) {
+                if (j <= phrases[i].length) {
+                    if (typingElement) typingElement.textContent = phrases[i].slice(0, j++);
+                    setTimeout(type, 80);
+                } else {
+                    setTimeout(() => { 
+                        if (typingElement) typingElement.textContent = ""; 
+                        j = 0; 
+                        i++; 
+                        type(); 
+                    }, 1600);
+                }
+            } else {
+                document.querySelector('.dot').style.opacity = '1';
+            }
+        }
 
-        // Logic: Intro Animation
-        window.addEventListener('load', () => {
-            const p1 = document.getElementById('p1');
-            const p2 = document.getElementById('p2');
-            const p3 = document.getElementById('p3');
+        window.onload = () => setTimeout(type, 800);
 
-            setTimeout(() => { p1.classList.add('active'); }, 500);
-            setTimeout(() => { p1.classList.remove('active'); }, 3000);
-            setTimeout(() => { p2.classList.add('active'); }, 3500);
-            setTimeout(() => { p2.classList.remove('active'); }, 6000);
-            setTimeout(() => { 
-                p3.classList.add('active'); 
-                startDot.style.opacity = '1';
-            }, 6500);
-        });
-
-        // Logic: Click to Enter
+        // 1. 点击进入
         startScreen.addEventListener('click', () => {
-            bgm.volume = 0.6;
-            bgm.play().catch(e => console.log("Audio autoplay prevented"));
+            const audio = document.getElementById("bgm");
+            audio.volume = 0.6;
+            audio.play().catch(e => console.log("Audio autoplay prevented"));
             
             startScreen.style.opacity = '0';
-            setTimeout(() => {
-                startScreen.style.display = 'none';
-                header.style.opacity = '1';
+            setTimeout(() => { 
+                startScreen.style.display = 'none'; 
+                document.getElementById("main-header").style.opacity = 1; 
             }, 2000);
         });
 
-        // Logic: Seal Interaction
+        // 2. 印章解封 (核心修改：2秒锁定)
         authorSeal.addEventListener('click', () => {
             if (authorSeal.classList.contains('dead')) return;
 
             authorSeal.classList.add('shaking');
-            
+            body.classList.add('scroll-locked'); // V21: 锁定滚动
+
             setTimeout(() => {
                 authorSeal.classList.remove('shaking');
                 authorSeal.classList.add('dead');
@@ -553,21 +284,24 @@
                 
                 body.classList.add('cinema-mode'); 
                 lifeLine.style.opacity = '1';
-                content.classList.add('revealed');
+                content.classList.add('show');
                 
+                // V21: 强制暂停 2 秒，让用户阅读第一段文案
                 setTimeout(() => {
-                    document.body.style.overflow = 'auto';
+                    body.classList.remove('scroll-locked'); // 解锁滚动
+                    document.documentElement.style.overflow = 'auto'; // 允许滚动
                     window.scrollBy({ top: 100, behavior: 'smooth' });
-                }, 500);
+                }, 2000); 
+
             }, 500);
         });
 
-        // Logic: Tab Visibility
+        // 3. 标签页呼唤
         document.addEventListener('visibilitychange', function() {
             document.title = document.hidden ? "别走……" : "人生如此 | 谦总";
         });
 
-        // Logic: Scroll Observer
+        // 4. 滚动观察器
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -575,24 +309,26 @@
                     observer.unobserve(entry.target); 
                 }
             });
-        }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
+        }, { threshold: 0.1 });
 
-        document.querySelectorAll('.content-block, .diary-entry, .final-chapter').forEach((block) => {
+        document.querySelectorAll('.content-block, .diary-entry').forEach((block) => {
             observer.observe(block);
         });
 
-        // Logic: Scroll Progress (Throttled via requestAnimationFrame)
-        let ticking = false;
+        // 5. 顶部生命线进度
         window.addEventListener('scroll', () => {
-            if (!ticking && lifeLine.style.opacity === '1') {
-                window.requestAnimationFrame(() => {
-                    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-                    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-                    const scrolled = (winScroll / height) * 100;
-                    lifeLine.style.width = scrolled + "%";
-                    ticking = false;
-                });
-                ticking = true;
+            if(lifeLine.style.opacity === '1') {
+                let ticking = false;
+                if (!ticking) {
+                    window.requestAnimationFrame(() => {
+                        const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                        const scrolled = (winScroll / height) * 100;
+                        lifeLine.style.width = scrolled + "%";
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
             }
         });
     </script>
